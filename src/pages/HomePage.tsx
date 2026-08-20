@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ApplyWizard } from "@/components/ApplyWizard";
 
 const fade = {
   initial: { opacity: 0, y: 16 },
@@ -273,61 +274,15 @@ export function HomePage() {
 
       {/* Apply */}
       <section id="apply" className="py-32 px-6 bg-surface-soft">
-        <div className="max-w-md mx-auto text-center">
-          <motion.h2 {...fade} className="text-3xl md:text-4xl font-bold mb-3">
+        <div className="max-w-lg mx-auto text-center">
+          <motion.h2 {...fade} className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "#0B0B5D" }}>
             הרשמה
           </motion.h2>
-          <motion.p {...fade} className="text-text-secondary mb-12">
-            המחזור הקרוב מתחיל בקרוב. השאירו פרטים.
+          <motion.p {...fade} className="mb-12" style={{ color: "#6b7280" }}>
+            המחזור הקרוב מתחיל בקרוב — הצטרפו תוך דקה
           </motion.p>
 
-          <form className="space-y-4 text-right">
-            <input
-              type="text"
-              placeholder="שם מלא"
-              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
-              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
-            />
-            <input
-              type="tel"
-              placeholder="טלפון"
-              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
-              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
-            />
-            <input
-              type="email"
-              placeholder="אימייל"
-              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
-              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
-            />
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              style={{
-                width: "100%",
-                marginTop: "16px",
-                background: "linear-gradient(135deg, #0B0B5D 0%, #214CC9 100%)",
-                color: "#fff",
-                padding: "18px 40px",
-                borderRadius: "14px",
-                fontSize: "17px",
-                fontWeight: 600,
-                border: "none",
-                cursor: "pointer",
-                boxShadow: "0 4px 20px rgba(11, 11, 93, 0.25), 0 1px 3px rgba(11, 11, 93, 0.1), inset 0 1px 0 rgba(255,255,255,0.1)",
-              }}
-            >
-              שליחת פרטים
-            </motion.button>
-          </form>
+          <ApplyWizard />
         </div>
       </section>
     </>
