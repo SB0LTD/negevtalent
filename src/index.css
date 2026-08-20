@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors - Negev Talent */
+  --color-primary-50: #f0f4ff;
+  --color-primary-100: #dbe4ff;
+  --color-primary-200: #bac8ff;
+  --color-primary-300: #91a7ff;
+  --color-primary-400: #748ffc;
+  --color-primary-500: #5c7cfa;
+  --color-primary-600: #4c6ef5;
+  --color-primary-700: #4263eb;
+  --color-primary-800: #3b5bdb;
+  --color-primary-900: #364fc7;
+
+  --color-accent-50: #e6fcf5;
+  --color-accent-100: #c3fae8;
+  --color-accent-200: #96f2d7;
+  --color-accent-300: #63e6be;
+  --color-accent-400: #38d9a9;
+  --color-accent-500: #20c997;
+  --color-accent-600: #12b886;
+  --color-accent-700: #0ca678;
+  --color-accent-800: #099268;
+  --color-accent-900: #087f5b;
+
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8f9fa;
+  --color-surface-dark: #1a1b2e;
+  --color-surface-darker: #0f1021;
+
+  --color-text-primary: #1a1b2e;
+  --color-text-secondary: #495057;
+  --color-text-muted: #868e96;
+  --color-text-on-dark: #f8f9fa;
+
+  /* Typography */
+  --font-sans: "Heebo", system-ui, -apple-system, sans-serif;
+
+  /* Spacing scale */
+  --spacing-section: 6rem;
+  --spacing-section-sm: 4rem;
+
+  /* Border radius */
+  --radius-card: 1rem;
+  --radius-button: 0.5rem;
+  --radius-pill: 9999px;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* RTL Utilities */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-500);
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
