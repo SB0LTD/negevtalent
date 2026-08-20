@@ -78,27 +78,51 @@ export function HomePage() {
             הכשרה אינטנסיבית של 3 חודשים — מאפס ועד תעסוקה.
           </p>
 
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-5">
             <motion.a
               href="#apply"
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-2xl px-10 py-4 text-base font-semibold text-white shadow-lg shadow-navy/20 hover:shadow-xl hover:shadow-navy/30 transition-shadow"
-              style={{ backgroundColor: "#0B0B5D" }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              style={{
+                background: "linear-gradient(135deg, #0B0B5D 0%, #214CC9 100%)",
+                color: "#fff",
+                padding: "18px 40px",
+                borderRadius: "14px",
+                fontSize: "16px",
+                fontWeight: 600,
+                letterSpacing: "-0.01em",
+                boxShadow: "0 4px 20px rgba(11, 11, 93, 0.25), 0 1px 3px rgba(11, 11, 93, 0.1), inset 0 1px 0 rgba(255,255,255,0.1)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: "none",
+                minWidth: "200px",
+              }}
             >
               הרשמה לתוכנית
-              <svg className="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
             </motion.a>
             <motion.a
               href="#what"
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-2xl px-10 py-4 text-base font-medium shadow-sm hover:shadow-md transition-shadow"
-              style={{ border: "2px solid #e5e7eb", color: "#0B0B5D" }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              style={{
+                background: "#fff",
+                color: "#0B0B5D",
+                padding: "18px 40px",
+                borderRadius: "14px",
+                fontSize: "16px",
+                fontWeight: 500,
+                letterSpacing: "-0.01em",
+                border: "1.5px solid #e5e7eb",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: "none",
+                minWidth: "200px",
+              }}
             >
               מה זה Sig?
             </motion.a>
@@ -271,11 +295,22 @@ export function HomePage() {
             />
             <motion.button
               type="submit"
-              whileHover={{ scale: 1.02, y: -1 }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              className="w-full mt-4 text-white font-semibold text-lg py-4 rounded-2xl shadow-lg shadow-navy/20 hover:shadow-xl hover:shadow-navy/30 transition-shadow cursor-pointer"
-              style={{ backgroundColor: "#0B0B5D" }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              style={{
+                width: "100%",
+                marginTop: "16px",
+                background: "linear-gradient(135deg, #0B0B5D 0%, #214CC9 100%)",
+                color: "#fff",
+                padding: "18px 40px",
+                borderRadius: "14px",
+                fontSize: "17px",
+                fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(11, 11, 93, 0.25), 0 1px 3px rgba(11, 11, 93, 0.1), inset 0 1px 0 rgba(255,255,255,0.1)",
+              }}
             >
               שליחת פרטים
             </motion.button>
