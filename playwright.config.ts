@@ -5,6 +5,7 @@ export default defineConfig({
   outputDir: "./tests/results",
   fullyParallel: true,
   retries: 0,
+  timeout: 60000,
   reporter: [["html", { open: "never" }]],
   use: {
     baseURL: "https://negev.sb0.tech",

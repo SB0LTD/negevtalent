@@ -13,8 +13,8 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 bg-white/80 backdrop-blur-lg border-b border-primary-100/50">
-      <div className="flex items-center justify-between px-6 py-3">
+    <header className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-lg border-b border-primary-100/50">
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-2 shrink-0">
           <img
@@ -26,7 +26,7 @@ export function Header() {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-5">
+        <nav className="hidden xl:flex items-center gap-4">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -47,7 +47,7 @@ export function Header() {
         {/* Mobile Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden flex flex-col gap-1.5 p-2"
+          className="xl:hidden flex flex-col gap-1.5 p-2"
           aria-label="תפריט"
         >
           <span className={`block h-0.5 w-6 bg-text-primary transition-transform ${mobileOpen ? "translate-y-2 rotate-45" : ""}`} />
@@ -63,7 +63,7 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden overflow-hidden bg-white border-t border-primary-100/50"
+            className="xl:hidden overflow-hidden bg-white border-t border-primary-100/50"
           >
             <div className="flex flex-col gap-4 px-6 py-6">
               {navLinks.map((link) => (

@@ -93,7 +93,7 @@ test.describe("Bootcamp Section", () => {
 
   test("bootcamp has 3 feature cards", async ({ page }) => {
     await page.goto(SITE_URL, { waitUntil: "networkidle" });
-    const cards = page.locator("#bootcamp .group");
+    const cards = page.locator("#bootcamp .rounded-2xl");
     expect(await cards.count()).toBe(3);
   });
 
