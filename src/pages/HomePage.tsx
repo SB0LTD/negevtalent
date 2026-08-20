@@ -46,6 +46,7 @@ const tracks = [
 ];
 
 const partners = [
+  { name: "Elevation", logo: "/partners/elevation.png" },
   { name: "אשכול", logo: "/partners/eshkol.png" },
   { name: "ג׳וינט", logo: "/partners/joint.png" },
   { name: "נתגב", logo: "/partners/netgev.png" },
@@ -229,6 +230,225 @@ export function HomePage() {
           ))}
         </motion.div>
       </Section>
+
+      {/* SB0 Bootcamp — Eye-catching animated section */}
+      <section
+        id="bootcamp"
+        className="relative overflow-hidden bg-surface-darker py-[var(--spacing-section)] px-6"
+      >
+        {/* Animated background grid */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(92, 124, 250, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 124, 250, 0.3) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+            }}
+          />
+        </div>
+
+        {/* Animated gradient blobs */}
+        <motion.div
+          animate={{
+            x: [0, 50, -30, 0],
+            y: [0, -30, 20, 0],
+            scale: [1, 1.3, 0.9, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-primary-600/30 to-accent-500/20 blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, -40, 30, 0],
+            y: [0, 40, -20, 0],
+            scale: [1.2, 0.8, 1.1, 1.2],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-accent-600/25 to-primary-500/15 blur-3xl"
+        />
+
+        <div className="relative z-10 mx-auto max-w-6xl">
+          {/* Header badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="mb-6 flex justify-center"
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/30 bg-accent-500/10 px-5 py-2 text-sm font-medium text-accent-300">
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="inline-block h-2 w-2 rounded-full bg-accent-400"
+              />
+              חדש — מסלול הכשרה ייחודי
+            </span>
+          </motion.div>
+
+          {/* Main heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-center text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl"
+          >
+            <span className="block">Bootcamp</span>
+            <span className="mt-2 block bg-gradient-to-l from-accent-300 via-primary-300 to-accent-400 bg-clip-text text-transparent">
+              3 חודשים. מקצוע חדש.
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mt-6 max-w-2xl text-center text-lg text-text-muted md:text-xl"
+          >
+            שיתוף פעולה בין <strong className="text-white">SB0 LTD</strong> ו-<strong className="text-white">Negev Talent</strong> —
+            מסלול אינטנסיבי של 3 חודשים שהופך אנשים מוכשרים למקצועני טכנולוגיה
+          </motion.p>
+
+          {/* Feature cards */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+            }}
+            className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3"
+          >
+            {[
+              {
+                icon: "⚡",
+                title: "אינטנסיבי ומעשי",
+                description: "3 חודשים של למידה צמודה, פרויקטים אמיתיים, ומנטורינג 1:1 עם מפתחים מהתעשייה",
+                gradient: "from-primary-500/20 to-primary-600/5",
+                border: "border-primary-500/30",
+              },
+              {
+                icon: "🎓",
+                title: "SIG — Software Integration Group",
+                description: "הכשרה מקצועית בשיטת SIG — שילוב תוכנה, אינטגרציה, ועבודה בצוותים בסביבת פיתוח אמיתית",
+                gradient: "from-accent-500/20 to-accent-600/5",
+                border: "border-accent-500/30",
+              },
+              {
+                icon: "🚀",
+                title: "מוכנים לתעשייה",
+                description: "בוגרי התוכנית מקבלים ליווי קריירה, חיבור למעסיקים, וכניסה ישירה לעולם ההייטק בנגב",
+                gradient: "from-primary-400/20 to-accent-500/5",
+                border: "border-primary-400/30",
+              },
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, y: 30, scale: 0.95 },
+                  visible: { opacity: 1, y: 0, scale: 1 },
+                }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className={`group relative rounded-2xl border ${card.border} bg-gradient-to-b ${card.gradient} p-8 backdrop-blur-sm`}
+              >
+                <motion.span
+                  className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/5 text-3xl"
+                  whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.5 } }}
+                >
+                  {card.icon}
+                </motion.span>
+                <h3 className="mb-3 text-xl font-bold text-white">{card.title}</h3>
+                <p className="leading-relaxed text-text-muted">{card.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Timeline visualization */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className="mt-20 flex flex-col items-center"
+          >
+            <div className="flex w-full max-w-3xl items-center justify-between">
+              {["חודש 1", "חודש 2", "חודש 3"].map((month, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.6 + i * 0.2, type: "spring" }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.div
+                    animate={{ boxShadow: ["0 0 0 0 rgba(92, 124, 250, 0)", "0 0 0 12px rgba(92, 124, 250, 0)", "0 0 0 0 rgba(92, 124, 250, 0)"] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.7 }}
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-lg font-bold text-white shadow-lg"
+                  >
+                    {i + 1}
+                  </motion.div>
+                  <span className="mt-3 text-sm font-medium text-text-muted">{month}</span>
+                  <span className="mt-1 text-xs text-text-muted/70">
+                    {["יסודות + כלים", "פרויקטים + SIG", "התמחות + השמה"][i]}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+            {/* Connecting line */}
+            <div className="relative -mt-[52px] mb-12 h-0.5 w-full max-w-[calc(75%_-_3rem)]">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.8 }}
+                className="absolute inset-0 origin-right bg-gradient-to-l from-accent-500 via-primary-500 to-primary-400"
+              />
+            </div>
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mt-16 flex justify-center"
+          >
+            <a
+              href="#contact"
+              className="group relative inline-flex items-center gap-3 rounded-full bg-gradient-to-l from-primary-600 to-accent-600 px-10 py-5 text-lg font-bold text-white shadow-xl shadow-primary-600/20 transition-all hover:shadow-2xl hover:shadow-primary-600/30"
+            >
+              <span>הצטרפו ל-Bootcamp</span>
+              <motion.span
+                animate={{ x: [0, -5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-xl"
+              >
+                ←
+              </motion.span>
+            </a>
+          </motion.div>
+
+          {/* Powered by logos */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="mt-12 flex items-center justify-center gap-6 text-sm text-text-muted"
+          >
+            <span>בשיתוף</span>
+            <img src="/partners/sb0.png" alt="SB0 LTD" className="h-8 w-auto brightness-0 invert opacity-70" />
+            <span>×</span>
+            <img src="/partners/elevation.png" alt="Elevation" className="h-8 w-auto brightness-0 invert opacity-70" />
+          </motion.div>
+        </div>
+      </section>
 
       {/* Partners */}
       <Section id="partners">
