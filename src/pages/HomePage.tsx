@@ -58,9 +58,9 @@ export function HomePage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-l from-blue to-red">ב-Sig</span>
           </h1>
           <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-xl mx-auto" style={{ color: "#4b5563" }}>
-            Sig הוא הקומפיילר שיודע כמה זיכרון יש לו.
+            שלושה חודשים אינטנסיביים של לימודי פיתוח בשפת Sig.
             <br />
-            הכשרה אינטנסיבית של 3 חודשים — מאפס ועד תעסוקה.
+            בלי ניסיון קודם. בנגב. עם אפשרות תעסוקה בסוף.
           </p>
 
           {/* Buttons */}
@@ -103,10 +103,10 @@ export function HomePage() {
 
           <motion.div {...fade} className="text-center mt-8">
             <p className="text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: "#4b5563" }}>
-              <strong style={{ color: "#0B0B5D" }}>Sig</strong> הוא קומפיילר — drop-in replacement ל-Zig. אותה שפה, אותו parser, אותם כלים. ההבדל? כשמשנים סיומת קובץ ל-<code style={{ background: "rgba(11,11,93,0.06)", padding: "2px 8px", borderRadius: "4px", color: "#0B0B5D", fontSize: "0.9em" }}>.sig</code> הקומפיילר דורש שליטה מלאה בזיכרון.
+              <strong style={{ color: "#0B0B5D" }}>Sig</strong> הוא קומפיילר שמבוסס על Zig. אותה שפה בדיוק, אותם כלים. הדבר היחיד שמשתנה: כשקובץ נקרא <code style={{ background: "rgba(11,11,93,0.06)", padding: "2px 8px", borderRadius: "4px", color: "#0B0B5D", fontSize: "0.9em" }}>.sig</code> הקומפיילר כבר לא מרשה לך להקצות זיכרון בלי שתדע בדיוק לאן כל בייט הולך.
             </p>
             <p className="mt-5 text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: "#4b5563" }}>
-              פותח על ידי <strong style={{ color: "#0B0B5D" }}>SB0 LTD</strong> ומסונכרן עם Zig upstream בכל commit. לומדים systems programming מודרני — עם שליטה מוחלטת על המשאבים.
+              Sig נבנה ומתוחזק על ידי <strong style={{ color: "#0B0B5D" }}>SB0 LTD</strong>, ומסונכרן עם Zig בכל קומיט. מי שלומד את Sig לומד systems programming אמיתי, עם שליטה מלאה על כל מה שקורה מתחת למכסה.
             </p>
           </motion.div>
 
@@ -119,14 +119,14 @@ export function HomePage() {
         <div className="max-w-4xl mx-auto">
           <motion.div {...fade} className="text-center mb-20">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style={{ background: "#FEF2F2", color: "#F56345" }}>המסלול</span>
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>מה תלמדו ב-3 חודשים</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>מה תלמדו בשלושה חודשים</h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { n: "01", title: "יסודות", color: "#214CC9", items: ["שפת Zig/Sig מאפס", "ניהול זיכרון ידני", "מבני נתונים ואלגוריתמים", "סביבת פיתוח וכלים"] },
-              { n: "02", title: "פרקטיקה", color: "#F56345", items: ["פרויקטים מהתעשייה", "עבודת צוות ו-Code Review", "קומפילציה, לינקינג, דיבאגינג", "Strict mode — קבצי .sig"] },
-              { n: "03", title: "השמה", color: "#F79534", items: ["אינטגרציה בסביבת עבודה", "הכנה לראיונות טכניים", "ליווי קריירה אישי", "אפשרות העסקה ב-SB0"] },
+              { n: "01", title: "יסודות", color: "#214CC9", items: ["שפת Zig/Sig מהתחלה", "להבין איך זיכרון עובד", "מבני נתונים שימושיים", "סביבת עבודה וכלים"] },
+              { n: "02", title: "פרקטיקה", color: "#F56345", items: ["לבנות פרויקטים אמיתיים", "לעבוד בצוות, לעשות Code Review", "קומפילציה, לינקינג, דיבאגינג", "לכתוב קוד ב-strict mode"] },
+              { n: "03", title: "כניסה לתעשייה", color: "#F79534", items: ["להשתלב בסביבת עבודה", "להתכונן לראיונות טכניים", "ליווי אישי בתהליך", "אפשרות לעבוד ב-SB0"] },
             ].map((phase, i) => (
               <motion.div
                 key={i}
@@ -161,15 +161,15 @@ export function HomePage() {
         <div className="max-w-2xl mx-auto text-center">
           <motion.div {...fade} className="mb-16">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style={{ background: "#FFF7ED", color: "#F79534" }}>קהל יעד</span>
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>למי מתאים</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>למי זה מתאים</h2>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              "רוצים להיכנס לפיתוח low-level",
-              "תושבי הנגב — הכשרה מקומית",
-              "אין צורך בניסיון קודם",
-              "מוכנים ל-3 חודשים אינטנסיביים",
+              "אנשים שמעוניינים בפיתוח low-level",
+              "גרים בנגב ורוצים ללמוד מקומית",
+              "לא צריך ניסיון קודם בתכנות",
+              "מוכנים להשקיע 3 חודשים ברצינות",
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -198,15 +198,15 @@ export function HomePage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fade} className="mb-16">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style={{ background: "#EEF2FF", color: "#214CC9" }}>שותפים</span>
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>בשיתוף</h2>
-            <p className="mt-4" style={{ color: "#6b7280" }}>התוכנית מופעלת בשיתוף גופים מובילים</p>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>מי עומד מאחורי זה</h2>
+            <p className="mt-4" style={{ color: "#6b7280" }}>התוכנית רצה בשיתוף פעולה של כמה גופים</p>
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { name: "Elevation", role: "מפעילי ההכשרה", logo: "/partners/elevation.png" },
-              { name: "SB0 LTD", role: "פיתוח ותעסוקה", logo: "/partners/sb0.png" },
-              { name: "Negev Talent", role: "יוזמת התוכנית", logo: "/logo.png" },
+              { name: "Elevation", role: "מנהלים את ההכשרה", logo: "/partners/elevation.png" },
+              { name: "SB0 LTD", role: "הטכנולוגיה והתעסוקה", logo: "/partners/sb0.png" },
+              { name: "Negev Talent", role: "יזמו את התוכנית", logo: "/logo.png" },
               { name: "אשכול הנגב", role: "שותף אזורי", logo: "/partners/eshkol.png" },
             ].map((p, i) => (
               <motion.div
@@ -238,7 +238,7 @@ export function HomePage() {
           <motion.div {...fade} className="mb-12">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style={{ background: "#E8F5E9", color: "#2e7d32" }}>פתוח להרשמה</span>
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#0B0B5D" }}>הרשמה</h2>
-            <p className="mt-3" style={{ color: "#6b7280" }}>המחזור הקרוב מתחיל בקרוב — הצטרפו תוך דקה</p>
+            <p className="mt-3" style={{ color: "#6b7280" }}>המחזור הקרוב מתחיל בקרוב. תשאירו פרטים ונחזור אליכם</p>
           </motion.div>
           <ApplyWizard />
         </div>
