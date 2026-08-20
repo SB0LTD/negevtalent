@@ -56,6 +56,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -67,9 +68,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* RTL Utilities */
-[dir="rtl"] {
-  text-align: right;
+/* RTL is handled by HTML dir attribute */
+/* Fix mx-auto in RTL — ensure margin-inline: auto works consistently */
+.mx-auto {
+  margin-inline: auto;
 }
 
 /* Smooth scrollbar */

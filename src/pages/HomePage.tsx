@@ -54,19 +54,6 @@ const partners = [
   { name: "SB0", logo: "/partners/sb0.png" },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function HomePage() {
   return (
     <>
@@ -95,11 +82,12 @@ export function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="mb-6 flex justify-center"
           >
             <img
-              src="/logo-white.png"
+              src="/symbol.png"
               alt="Negev Talent"
-              className="mx-auto mb-8 h-16 w-auto md:h-20"
+              className="h-16 w-16 md:h-20 md:w-20"
             />
           </motion.div>
 
@@ -133,13 +121,13 @@ export function HomePage() {
           >
             <a
               href="#contact"
-              className="rounded-[var(--radius-pill)] bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700 hover:shadow-primary-600/40 transition-all"
+              className="inline-flex items-center justify-center rounded-full bg-primary-600 px-10 py-4 text-base font-semibold text-white shadow-xl shadow-primary-600/30 hover:bg-primary-700 hover:shadow-primary-600/50 transition-all min-w-[180px]"
             >
               הרשמה לתוכנית
             </a>
             <a
               href="#program"
-              className="rounded-[var(--radius-pill)] border border-white/20 px-8 py-4 text-base font-medium text-text-on-dark hover:border-white/40 hover:bg-white/5 transition-all"
+              className="inline-flex items-center justify-center rounded-full border-2 border-white/30 px-10 py-4 text-base font-medium text-white hover:border-white/60 hover:bg-white/10 transition-all min-w-[180px]"
             >
               למידע נוסף
             </a>
@@ -186,9 +174,9 @@ export function HomePage() {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "100px" }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="rounded-[var(--radius-card)] border border-primary-100 bg-surface-alt p-8 text-center hover:shadow-lg hover:shadow-primary-100/50 transition-shadow"
+              className="rounded-2xl border border-primary-100 bg-surface-alt p-8 text-center hover:shadow-lg hover:shadow-primary-100/50 transition-shadow"
             >
               <div className="mb-4 text-4xl">{item.icon}</div>
               <h3 className="mb-2 text-xl font-bold">{item.title}</h3>
@@ -204,18 +192,11 @@ export function HomePage() {
           title="תכנית הלימודים"
           subtitle="8 מודולים מקצועיים שמובילים מהיסודות ועד פרויקט גמר"
         />
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2"
-        >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {tracks.map((track, i) => (
-            <motion.div
+            <div
               key={i}
-              variants={itemVariants}
-              className="group rounded-[var(--radius-card)] border border-primary-100/60 bg-white p-6 hover:border-primary-300 hover:shadow-md transition-all"
+              className="group rounded-2xl border border-primary-100/60 bg-white p-6 hover:border-primary-300 hover:shadow-md transition-all"
             >
               <div className="flex items-start gap-4">
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-2xl group-hover:bg-primary-100 transition-colors">
@@ -226,54 +207,57 @@ export function HomePage() {
                   <p className="text-sm leading-relaxed text-text-secondary">{track.description}</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </Section>
 
       {/* SB0 Bootcamp — Eye-catching animated section */}
       <section
         id="bootcamp"
-        className="relative overflow-hidden bg-surface-darker py-[var(--spacing-section)] px-6"
+        className="relative bg-surface-darker py-[var(--spacing-section)]"
       >
-        {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(92, 124, 250, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 124, 250, 0.3) 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
+        {/* Background clip container */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Animated background grid */}
+          <div className="absolute inset-0 opacity-10">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(92, 124, 250, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 124, 250, 0.3) 1px, transparent 1px)",
+                backgroundSize: "60px 60px",
+              }}
+            />
+          </div>
+
+          {/* Animated gradient blobs */}
+          <motion.div
+            animate={{
+              x: [0, 50, -30, 0],
+              y: [0, -30, 20, 0],
+              scale: [1, 1.3, 0.9, 1],
             }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-primary-600/30 to-accent-500/20 blur-3xl"
+          />
+          <motion.div
+            animate={{
+              x: [0, -40, 30, 0],
+              y: [0, 40, -20, 0],
+              scale: [1.2, 0.8, 1.1, 1.2],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-accent-600/25 to-primary-500/15 blur-3xl"
           />
         </div>
 
-        {/* Animated gradient blobs */}
-        <motion.div
-          animate={{
-            x: [0, 50, -30, 0],
-            y: [0, -30, 20, 0],
-            scale: [1, 1.3, 0.9, 1],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-primary-600/30 to-accent-500/20 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            x: [0, -40, 30, 0],
-            y: [0, 40, -20, 0],
-            scale: [1.2, 0.8, 1.1, 1.2],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-accent-600/25 to-primary-500/15 blur-3xl"
-        />
-
-        <div className="relative z-10 mx-auto max-w-6xl">
+        <div className="relative z-10 mx-auto max-w-[960px] px-6">
           {/* Header badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.5, type: "spring" }}
             className="mb-6 flex justify-center"
           >
@@ -291,7 +275,7 @@ export function HomePage() {
           <motion.h2
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.7 }}
             className="text-center text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl"
           >
@@ -304,7 +288,7 @@ export function HomePage() {
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mx-auto mt-6 max-w-2xl text-center text-lg text-text-muted md:text-xl"
           >
@@ -313,16 +297,7 @@ export function HomePage() {
           </motion.p>
 
           {/* Feature cards */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
-            }}
-            className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3"
-          >
+          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
             {[
               {
                 icon: "⚡",
@@ -348,105 +323,63 @@ export function HomePage() {
             ].map((card, i) => (
               <motion.div
                 key={i}
-                variants={{
-                  hidden: { opacity: 0, y: 30, scale: 0.95 },
-                  visible: { opacity: 1, y: 0, scale: 1 },
-                }}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className={`group relative rounded-2xl border ${card.border} bg-gradient-to-b ${card.gradient} p-8 backdrop-blur-sm`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "100px" }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                className={`rounded-2xl border ${card.border} bg-gradient-to-b ${card.gradient} p-6 backdrop-blur-sm`}
               >
-                <motion.span
-                  className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/5 text-3xl"
-                  whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.5 } }}
-                >
+                <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/5 text-3xl">
                   {card.icon}
-                </motion.span>
+                </span>
                 <h3 className="mb-3 text-xl font-bold text-white">{card.title}</h3>
-                <p className="leading-relaxed text-text-muted">{card.description}</p>
+                <p className="text-sm leading-relaxed text-text-muted">{card.description}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Timeline visualization */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className="mt-20 flex flex-col items-center"
-          >
+          <div className="mt-20 flex flex-col items-center">
             <div className="flex w-full max-w-3xl items-center justify-between">
               {["חודש 1", "חודש 2", "חודש 3"].map((month, i) => (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.6 + i * 0.2, type: "spring" }}
                   className="flex flex-col items-center"
                 >
-                  <motion.div
-                    animate={{ boxShadow: ["0 0 0 0 rgba(92, 124, 250, 0)", "0 0 0 12px rgba(92, 124, 250, 0)", "0 0 0 0 rgba(92, 124, 250, 0)"] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.7 }}
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-lg font-bold text-white shadow-lg"
-                  >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-lg font-bold text-white shadow-lg">
                     {i + 1}
-                  </motion.div>
+                  </div>
                   <span className="mt-3 text-sm font-medium text-text-muted">{month}</span>
                   <span className="mt-1 text-xs text-text-muted/70">
                     {["יסודות + כלים", "פרויקטים + SIG", "התמחות + השמה"][i]}
                   </span>
-                </motion.div>
+                </div>
               ))}
             </div>
             {/* Connecting line */}
             <div className="relative -mt-[52px] mb-12 h-0.5 w-full max-w-[calc(75%_-_3rem)]">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.8 }}
-                className="absolute inset-0 origin-right bg-gradient-to-l from-accent-500 via-primary-500 to-primary-400"
-              />
+              <div className="absolute inset-0 bg-gradient-to-l from-accent-500 via-primary-500 to-primary-400" />
             </div>
-          </motion.div>
+          </div>
 
           {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="mt-16 flex justify-center"
-          >
+          <div className="mt-16 flex justify-center">
             <a
               href="#contact"
               className="group relative inline-flex items-center gap-3 rounded-full bg-gradient-to-l from-primary-600 to-accent-600 px-10 py-5 text-lg font-bold text-white shadow-xl shadow-primary-600/20 transition-all hover:shadow-2xl hover:shadow-primary-600/30"
             >
               <span>הצטרפו ל-Bootcamp</span>
-              <motion.span
-                animate={{ x: [0, -5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="text-xl"
-              >
-                ←
-              </motion.span>
+              <span className="text-xl">←</span>
             </a>
-          </motion.div>
+          </div>
 
           {/* Powered by logos */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="mt-12 flex items-center justify-center gap-6 text-sm text-text-muted"
-          >
+          <div className="mt-12 flex items-center justify-center gap-6 text-sm text-text-muted">
             <span>בשיתוף</span>
-            <img src="/partners/sb0.png" alt="SB0 LTD" className="h-8 w-auto brightness-0 invert opacity-70" />
+            <img src="/partners/sb0.png" alt="SB0 LTD" className="h-6 w-auto opacity-70" />
             <span>×</span>
-            <img src="/partners/elevation.png" alt="Elevation" className="h-8 w-auto brightness-0 invert opacity-70" />
-          </motion.div>
+            <img src="/partners/elevation.png" alt="Elevation" className="h-6 max-w-[120px] w-auto opacity-70" />
+          </div>
         </div>
       </section>
 
@@ -456,27 +389,20 @@ export function HomePage() {
           title="השותפים שלנו"
           subtitle="בשיתוף גופים מובילים בנגב ובארץ"
         />
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="flex flex-wrap items-center justify-center gap-12"
-        >
+        <div className="flex flex-wrap items-center justify-center gap-12">
           {partners.map((partner, i) => (
-            <motion.div
+            <div
               key={i}
-              variants={itemVariants}
               className="grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all"
             >
               <img
                 src={partner.logo}
                 alt={partner.name}
-                className="h-16 w-auto object-contain"
+                className="h-10 max-w-[120px] w-auto object-contain"
               />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </Section>
 
       {/* Contact / CTA */}
@@ -487,37 +413,31 @@ export function HomePage() {
             subtitle="הצטרפו לתוכנית ההכשרה הטכנולוגית המובילה בנגב"
             light
           />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mx-auto mt-8 max-w-lg rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-8 backdrop-blur-sm"
-          >
+          <div className="mx-auto mt-8 max-w-lg w-full rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
             <form className="flex flex-col gap-4">
               <input
                 type="text"
                 placeholder="שם מלא"
-                className="rounded-[var(--radius-button)] border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
+                className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
               />
               <input
                 type="email"
                 placeholder="אימייל"
-                className="rounded-[var(--radius-button)] border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
+                className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
               />
               <input
                 type="tel"
                 placeholder="טלפון"
-                className="rounded-[var(--radius-button)] border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
+                className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/50 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-colors"
               />
               <button
                 type="submit"
-                className="mt-2 rounded-[var(--radius-pill)] bg-primary-600 px-8 py-4 font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700 hover:shadow-primary-600/40 transition-all"
+                className="mt-2 rounded-full bg-primary-600 px-8 py-4 font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700 hover:shadow-primary-600/40 transition-all"
               >
                 שליחה
               </button>
             </form>
-          </motion.div>
+          </div>
         </div>
       </Section>
     </>

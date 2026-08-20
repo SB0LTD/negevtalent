@@ -5,7 +5,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <img src="/logo-white.png" alt="Negev Talent" className="h-10 w-auto mb-4" />
+            <img src="/logo-white.png" alt="Negev Talent" className="h-8 w-auto mb-4 max-w-[200px]" />
             <p className="text-sm text-text-muted leading-relaxed">
               הכשרה טכנולוגית והשתלבות בתעשייה בנגב.
               <br />
