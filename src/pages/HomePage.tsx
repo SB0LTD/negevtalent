@@ -129,16 +129,29 @@ export function HomePage() {
           </div>
         </motion.div>
 
-        {/* Partner logos — prominent */}
+        {/* Partner logos — infinite scroll carousel */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="relative mt-20 flex items-center justify-center gap-8"
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="relative mt-20 w-full max-w-md mx-auto overflow-hidden"
+          style={{ maskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)", WebkitMaskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)" }}
         >
-          <img src="/partners/elevation.png" alt="Elevation" className="h-8 w-auto object-contain" />
-          <div className="h-6 w-px bg-border" />
-          <img src="/partners/sb0.png" alt="SB0 LTD" className="h-8 w-auto object-contain" />
+          <motion.div
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="flex items-center gap-16 w-max"
+          >
+            {/* Double the logos for seamless loop */}
+            {[...Array(2)].map((_, set) => (
+              <div key={set} className="flex items-center gap-16 shrink-0">
+                <img src="/partners/elevation.png" alt="Elevation" className="h-7 w-auto object-contain opacity-60" />
+                <img src="/partners/sb0.png" alt="SB0 LTD" className="h-7 w-auto object-contain opacity-60" />
+                <img src="/logo.png" alt="Negev Talent" className="h-6 w-auto object-contain opacity-60" />
+                <img src="/partners/eshkol.png" alt="אשכול הנגב" className="h-7 w-auto object-contain opacity-60" />
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
       </section>
 
