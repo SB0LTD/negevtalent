@@ -1,11 +1,11 @@
-import { onRequest } from "firebase-functions/v2/https";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+const { onRequest } = require("firebase-functions/v2/https");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
 initializeApp();
 const db = getFirestore();
 
-export const apply = onRequest(
+exports.apply = onRequest(
   { cors: true, region: "europe-west1" },
   async (req, res) => {
     if (req.method !== "POST") {

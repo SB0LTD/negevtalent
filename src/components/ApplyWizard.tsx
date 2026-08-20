@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
 interface FormData {
   name: string;
@@ -53,20 +55,23 @@ export function ApplyWizard() {
   const submit = async () => {
     setSubmitting(true);
     try {
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const db = getFirestore(app);
+      await addDoc(collection(db, "applications"), {
+        ...data,
+        createdAt: new Date().toISOString(),
+        status: "new",
       });
-      if (!res.ok) throw new Error("Failed");
-    } catch {
-      // Fallback: store in localStorage if backend is not ready
+      setSubmitted(true);
+      next();
+    } catch (err) {
+      console.error("Submit error:", err);
+      // Fallback: store in localStorage
       const pending = JSON.parse(localStorage.getItem("pending_applications") || "[]");
       pending.push({ ...data, createdAt: new Date().toISOString() });
       localStorage.setItem("pending_applications", JSON.stringify(pending));
+      setSubmitted(true);
+      next();
     }
-    setSubmitted(true);
-    next();
     setSubmitting(false);
   };
 

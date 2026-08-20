@@ -4,13 +4,6 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
-        "source": "/api/apply",
-        "function": {
-          "functionId": "apply",
-          "region": "europe-west1"
-        }
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
@@ -29,6 +22,9 @@
   },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs20"
+    "runtime": "nodejs22"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }
