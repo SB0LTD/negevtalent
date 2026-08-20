@@ -79,18 +79,29 @@ export function HomePage() {
           </p>
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
+            <motion.a
               href="#apply"
-              className="w-full sm:w-auto inline-flex justify-center bg-navy text-white font-semibold text-base px-10 py-4 rounded-xl hover:bg-blue transition-colors"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-2xl px-10 py-4 text-base font-semibold text-white shadow-lg shadow-navy/20 hover:shadow-xl hover:shadow-navy/30 transition-shadow"
+              style={{ backgroundColor: "#0B0B5D" }}
             >
               הרשמה לתוכנית
-            </a>
-            <a
+              <svg className="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </motion.a>
+            <motion.a
               href="#what"
-              className="w-full sm:w-auto inline-flex justify-center text-navy font-medium text-base px-10 py-4 rounded-xl border border-border hover:border-navy/30 transition-colors"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-2xl px-10 py-4 text-base font-medium shadow-sm hover:shadow-md transition-shadow"
+              style={{ border: "2px solid #e5e7eb", color: "#0B0B5D" }}
             >
               מה זה Sig?
-            </a>
+            </motion.a>
           </div>
         </motion.div>
 
@@ -237,24 +248,37 @@ export function HomePage() {
             <input
               type="text"
               placeholder="שם מלא"
-              className="w-full border border-border rounded-xl px-5 py-4 focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/10 transition-all"
+              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
+              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
             />
             <input
               type="tel"
               placeholder="טלפון"
-              className="w-full border border-border rounded-xl px-5 py-4 focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/10 transition-all"
+              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
+              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
             />
             <input
               type="email"
               placeholder="אימייל"
-              className="w-full border border-border rounded-xl px-5 py-4 focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/10 transition-all"
+              className="w-full rounded-2xl px-5 py-4 text-base outline-none transition-all"
+              style={{ border: "2px solid #e5e7eb", backgroundColor: "#fff" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33,76,201,0.08)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; }}
             />
-            <button
+            <motion.button
               type="submit"
-              className="w-full mt-4 bg-navy text-white font-semibold text-lg py-4 rounded-xl hover:bg-blue transition-colors"
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-full mt-4 text-white font-semibold text-lg py-4 rounded-2xl shadow-lg shadow-navy/20 hover:shadow-xl hover:shadow-navy/30 transition-shadow cursor-pointer"
+              style={{ backgroundColor: "#0B0B5D" }}
             >
               שליחת פרטים
-            </button>
+            </motion.button>
           </form>
         </div>
       </section>
