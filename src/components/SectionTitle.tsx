@@ -1,34 +1,13 @@
-import { motion } from "framer-motion";
-
 interface SectionTitleProps {
   title: string;
   subtitle?: string;
-  light?: boolean;
 }
 
-export function SectionTitle({ title, subtitle, light = false }: SectionTitleProps) {
+export function SectionTitle({ title, subtitle }: SectionTitleProps) {
   return (
-    <div className="mb-12 text-center">
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "100px" }}
-        transition={{ duration: 0.5 }}
-        className={`text-3xl font-bold md:text-4xl ${light ? "text-text-on-dark" : "text-text-primary"}`}
-      >
-        {title}
-      </motion.h2>
-      {subtitle && (
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "100px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className={`mt-4 text-lg ${light ? "text-text-muted" : "text-text-secondary"}`}
-        >
-          {subtitle}
-        </motion.p>
-      )}
+    <div className="text-center mb-12">
+      <h2 className="text-3xl md:text-4xl font-bold text-navy">{title}</h2>
+      {subtitle && <p className="mt-4 text-text-secondary">{subtitle}</p>}
     </div>
   );
 }

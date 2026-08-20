@@ -4,18 +4,12 @@ interface SectionProps {
   id?: string;
   children: ReactNode;
   className?: string;
-  dark?: boolean;
 }
 
-export function Section({ id, children, className = "", dark = false }: SectionProps) {
+export function Section({ id, children, className = "" }: SectionProps) {
   return (
-    <section
-      id={id}
-      className={`py-[var(--spacing-section)] px-6 overflow-hidden ${dark ? "bg-surface-dark text-text-on-dark" : "bg-surface"} ${className}`}
-    >
-      <div className="mx-auto max-w-7xl">
-        {children}
-      </div>
+    <section id={id} className={`py-24 px-6 ${className}`}>
+      <div className="max-w-5xl mx-auto">{children}</div>
     </section>
   );
 }

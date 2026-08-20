@@ -2,89 +2,70 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { label: "ראשי", href: "#hero" },
   { label: "התוכנית", href: "#program" },
-  { label: "מסלולים", href: "#tracks" },
+  { label: "למי מתאים", href: "#audience" },
   { label: "שותפים", href: "#partners" },
-  { label: "צור קשר", href: "#contact" },
+  { label: "הרשמה", href: "#apply" },
 ];
 
 export function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-lg border-b border-primary-100/50">
-      <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <a href="#hero" className="flex items-center gap-2 shrink-0">
-          <img
-            src="/symbol.png"
-            alt="Negev Talent"
-            className="h-9 w-9 rounded-full"
-          />
-          <span className="text-lg font-bold text-primary-800 hidden sm:inline">Negev Talent</span>
+    <header className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md">
+      <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
+        <a href="#" className="shrink-0">
+          <img src="/logo.png" alt="Negev Talent Growth" className="h-8 w-auto" />
         </a>
 
-        {/* Desktop Nav */}
-        <nav className="hidden xl:flex items-center gap-4">
-          {navLinks.map((link) => (
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((l) => (
             <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-text-secondary hover:text-primary-600 transition-colors whitespace-nowrap"
+              key={l.href}
+              href={l.href}
+              className="text-sm font-medium text-text-secondary hover:text-navy transition-colors"
             >
-              {link.label}
+              {l.label}
             </a>
           ))}
-          <a
-            href="#contact"
-            className="shrink-0 rounded-full bg-primary-600 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-700 transition-colors whitespace-nowrap"
-          >
-            הרשמה
-          </a>
         </nav>
 
-        {/* Mobile Toggle */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="xl:hidden flex flex-col gap-1.5 p-2"
+          onClick={() => setOpen(!open)}
+          className="md:hidden p-2"
           aria-label="תפריט"
         >
-          <span className={`block h-0.5 w-6 bg-text-primary transition-transform ${mobileOpen ? "translate-y-2 rotate-45" : ""}`} />
-          <span className={`block h-0.5 w-6 bg-text-primary transition-opacity ${mobileOpen ? "opacity-0" : ""}`} />
-          <span className={`block h-0.5 w-6 bg-text-primary transition-transform ${mobileOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+          <svg className="w-6 h-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            {open ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
-        {mobileOpen && (
-          <motion.nav
+        {open && (
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="xl:hidden overflow-hidden bg-white border-t border-primary-100/50"
+            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
           >
-            <div className="flex flex-col gap-4 px-6 py-6">
-              {navLinks.map((link) => (
+            <nav className="flex flex-col gap-4 px-6 py-6">
+              {navLinks.map((l) => (
                 <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-base font-medium text-text-secondary hover:text-primary-600 transition-colors"
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="text-base font-medium text-text hover:text-brand transition-colors"
                 >
-                  {link.label}
+                  {l.label}
                 </a>
               ))}
-              <a
-                href="#contact"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 rounded-full bg-primary-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
-              >
-                הרשמה
-              </a>
-            </div>
-          </motion.nav>
+            </nav>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>
