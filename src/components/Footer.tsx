@@ -5,7 +5,7 @@ export function Footer() {
         <span>© {new Date().getFullYear()} Negev Talent Growth</span>
         <span>
           בנייה:{" "}
-          <a href="https://sb0.co" target="_blank" rel="noopener noreferrer" className="text-blue hover:text-navy transition-colors">
+          <a href="https://sb0.tech" target="_blank" rel="noopener noreferrer" className="text-blue hover:text-navy transition-colors">
             SB0 LTD
           </a>
         </span>
