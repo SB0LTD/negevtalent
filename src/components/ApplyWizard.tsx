@@ -2,14 +2,17 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "@/lib/firebase";
+import { sendToWebhook } from "@/lib/webhook";
 
 /* ─── Types ─── */
 interface FormData {
   name: string;
   phone: string;
   email: string;
+  idNum: string;
+  birthdate: string;
+  gender: string;
   city: string;
-  age: string;
   background: string;
   motivation: string;
 }
@@ -18,13 +21,16 @@ interface FieldError {
   name?: string;
   phone?: string;
   email?: string;
+  idNum?: string;
+  birthdate?: string;
+  gender?: string;
   city?: string;
 }
 
 /* ─── Constants ─── */
 const STEPS = [
   { id: "personal", label: "פרטים אישיים" },
-  { id: "background", label: "רקע" },
+  { id: "details", label: "פרטים נוספים" },
   { id: "done", label: "סיום" },
 ];
 
@@ -67,6 +73,39 @@ function validateCity(v: string): string | undefined {
   return undefined;
 }
 
+function validateIdNum(v: string): string | undefined {
+  if (!v.trim()) return "שדה חובה";
+  const id = v.trim();
+  if (!/^\d{5,9}$/.test(id)) return "מספר תעודת זהות לא תקין";
+  // Israeli ID checksum (Luhn-like)
+  const padded = id.padStart(9, "0");
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    let digit = Number(padded[i]) * ((i % 2) + 1);
+    if (digit > 9) digit -= 9;
+    sum += digit;
+  }
+  if (sum % 10 !== 0) return "מספר תעודת זהות לא תקין";
+  return undefined;
+}
+
+function validateBirthdate(v: string): string | undefined {
+  if (!v.trim()) return "שדה חובה";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return "תאריך לא תקין";
+  const now = new Date();
+  let age = now.getFullYear() - d.getFullYear();
+  const m = now.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+  if (age < 16 || age > 99) return "גיל לא תקין";
+  return undefined;
+}
+
+function validateGender(v: string): string | undefined {
+  if (!v.trim()) return "שדה חובה";
+  return undefined;
+}
+
 /* ─── Main Component ─── */
 export function ApplyWizard() {
   const [step, setStep] = useState(0);
@@ -75,8 +114,8 @@ export function ApplyWizard() {
   const [errors, setErrors] = useState<FieldError>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [data, setData] = useState<FormData>({
-    name: "", phone: "", email: "",
-    city: "", age: "", background: "", motivation: "",
+    name: "", phone: "", email: "", idNum: "", birthdate: "", gender: "",
+    city: "", background: "", motivation: "",
   });
 
   const set = (field: keyof FormData, value: string) => {
@@ -95,16 +134,21 @@ export function ApplyWizard() {
       phone: validatePhone(data.phone),
       email: validateEmail(data.email),
     };
-    setErrors(e);
-    setTouched({ name: true, phone: true, email: true });
+    setErrors((prev) => ({ ...prev, ...e }));
+    setTouched((prev) => ({ ...prev, name: true, phone: true, email: true }));
     return !e.name && !e.phone && !e.email;
   };
 
   const validateStep2 = (): boolean => {
-    const e: FieldError = { city: validateCity(data.city) };
+    const e: FieldError = {
+      idNum: validateIdNum(data.idNum),
+      birthdate: validateBirthdate(data.birthdate),
+      gender: validateGender(data.gender),
+      city: validateCity(data.city),
+    };
     setErrors((prev) => ({ ...prev, ...e }));
-    setTouched((prev) => ({ ...prev, city: true }));
-    return !e.city;
+    setTouched((prev) => ({ ...prev, idNum: true, birthdate: true, gender: true, city: true }));
+    return !e.idNum && !e.birthdate && !e.gender && !e.city;
   };
 
   const next = () => {
@@ -119,20 +163,39 @@ export function ApplyWizard() {
   const submit = async () => {
     if (!validateStep2()) return;
     setSubmitting(true);
+    const cleanPhone = data.phone.replace(/[\s\-()]/g, "");
+
+    // 1. Store in Firestore
     try {
       const db = getFirestore(app);
       await addDoc(collection(db, "applications"), {
         ...data,
-        phone: data.phone.replace(/[\s\-()]/g, ""),
+        phone: cleanPhone,
         createdAt: new Date().toISOString(),
         status: "new",
       });
     } catch (err) {
-      console.error("Submit error:", err);
+      console.error("Firestore error:", err);
       const pending = JSON.parse(localStorage.getItem("pending_applications") || "[]");
       pending.push({ ...data, createdAt: new Date().toISOString() });
       localStorage.setItem("pending_applications", JSON.stringify(pending));
     }
+
+    // 2. Sync to CRM webhook (fire-and-forget, never blocks UX)
+    try {
+      await sendToWebhook({
+        name: data.name,
+        email: data.email,
+        phone: cleanPhone,
+        city: data.city,
+        gender: data.gender,
+        birthdate: data.birthdate,
+        idNum: data.idNum,
+      });
+    } catch (err) {
+      console.error("Webhook error:", err);
+    }
+
     setDir(1);
     setStep(2);
     setSubmitting(false);
@@ -199,7 +262,35 @@ export function ApplyWizard() {
 
           {step === 1 && (
             <motion.div key="s2" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="space-y-5">
-              <h3 className="text-xl font-bold mb-6" style={{ color: "#0B0B5D" }}>עוד קצת פרטים</h3>
+              <h3 className="text-xl font-bold mb-6" style={{ color: "#0B0B5D" }}>עוד כמה פרטים</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <FormInput
+                  label="תעודת זהות"
+                  placeholder="123456789"
+                  value={data.idNum}
+                  onChange={(v) => set("idNum", v.replace(/\D/g, "").slice(0, 9))}
+                  onBlur={() => { touch("idNum"); setErrors((e) => ({ ...e, idNum: validateIdNum(data.idNum) })); }}
+                  error={touched.idNum ? errors.idNum : undefined}
+                  type="text"
+                  dir="ltr"
+                />
+                <FormInput
+                  label="תאריך לידה"
+                  value={data.birthdate}
+                  onChange={(v) => set("birthdate", v)}
+                  onBlur={() => { touch("birthdate"); setErrors((e) => ({ ...e, birthdate: validateBirthdate(data.birthdate) })); }}
+                  error={touched.birthdate ? errors.birthdate : undefined}
+                  type="date"
+                  dir="ltr"
+                />
+              </div>
+              <FormSelect
+                label="מגדר"
+                value={data.gender}
+                onChange={(v) => { set("gender", v); setErrors((e) => ({ ...e, gender: undefined })); }}
+                options={[{ label: "זכר", value: "male" }, { label: "נקבה", value: "female" }, { label: "אחר", value: "other" }]}
+                error={touched.gender ? errors.gender : undefined}
+              />
               <CityAutocomplete
                 value={data.city}
                 onChange={(v) => set("city", v)}
@@ -207,22 +298,10 @@ export function ApplyWizard() {
                 error={touched.city ? errors.city : undefined}
               />
               <FormSelect
-                label="טווח גילאים"
-                value={data.age}
-                onChange={(v) => set("age", v)}
-                options={["18-24", "25-30", "31-35", "36-40", "40+"]}
-              />
-              <FormSelect
                 label="ניסיון קודם בתכנות"
                 value={data.background}
                 onChange={(v) => set("background", v)}
                 options={["אין ניסיון", "למדתי קצת בעצמי", "קורס / לימודים", "ניסיון מקצועי"]}
-              />
-              <FormInput
-                label="למה אתם רוצים להצטרף?"
-                placeholder="אופציונלי"
-                value={data.motivation}
-                onChange={(v) => set("motivation", v)}
               />
             </motion.div>
           )}
@@ -313,9 +392,12 @@ function FormInput({ label, placeholder, value, onChange, onBlur, error, type = 
 }
 
 /* ─── Form Select ─── */
-function FormSelect({ label, value, onChange, options }: {
-  label: string; value: string; onChange: (v: string) => void; options: string[];
+type SelectOption = string | { label: string; value: string };
+
+function FormSelect({ label, value, onChange, options, error }: {
+  label: string; value: string; onChange: (v: string) => void; options: SelectOption[]; error?: string;
 }) {
+  const normalized = options.map((o) => typeof o === "string" ? { label: o, value: o } : o);
   return (
     <div>
       <label className="block text-sm font-medium mb-1.5" style={{ color: "#374151" }}>{label}</label>
@@ -325,15 +407,23 @@ function FormSelect({ label, value, onChange, options }: {
         className="w-full outline-none transition-all appearance-none cursor-pointer"
         style={{
           padding: "14px 16px", borderRadius: "10px", fontSize: "15px",
-          border: "1.5px solid #e5e7eb", background: "#fafafa",
+          border: `1.5px solid ${error ? "#ef4444" : "#e5e7eb"}`,
+          background: error ? "#fef2f2" : "#fafafa",
           color: value ? "#0B0B5D" : "#9ca3af",
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = "#214CC9"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(33,76,201,0.06)"; }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.background = "#fafafa"; e.currentTarget.style.boxShadow = "none"; }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#214CC9"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? "rgba(239,68,68,0.08)" : "rgba(33,76,201,0.06)"}`; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#e5e7eb"; e.currentTarget.style.background = error ? "#fef2f2" : "#fafafa"; e.currentTarget.style.boxShadow = "none"; }}
       >
         <option value="" disabled>בחרו...</option>
-        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        {normalized.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
+      <AnimatePresence>
+        {error && (
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-xs mt-1.5" style={{ color: "#ef4444" }}>
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

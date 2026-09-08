@@ -7,7 +7,7 @@ test.describe("Apply Wizard — Full E2E", () => {
   test.describe("Step 1 — Validation", () => {
 
     test("shows errors when submitting empty fields", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -23,7 +23,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("validates phone format", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -37,7 +37,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("validates email format", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -51,7 +51,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("formats phone number as user types", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -65,7 +65,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("clears errors on valid input", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -88,7 +88,7 @@ test.describe("Apply Wizard — Full E2E", () => {
   test.describe("Step 1 → Step 2 navigation", () => {
 
     test("advances to step 2 with valid data", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -102,11 +102,11 @@ test.describe("Apply Wizard — Full E2E", () => {
       await page.waitForTimeout(400);
 
       // Should be on step 2
-      await expect(page.getByText("עוד קצת פרטים")).toBeVisible();
+      await expect(page.getByText("עוד כמה פרטים")).toBeVisible();
     });
 
     test("back button returns to step 1 with data preserved", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -129,7 +129,7 @@ test.describe("Apply Wizard — Full E2E", () => {
   test.describe("Step 2 — City autocomplete", () => {
 
     test("shows city suggestions when typing", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -149,7 +149,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("selects city from autocomplete", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -171,10 +171,42 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
   });
 
+  test.describe("Step 2 — ID & birthdate validation", () => {
+
+    async function toStep2(page: import("@playwright/test").Page) {
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
+      await page.locator("#apply").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(500);
+      await page.getByPlaceholder("ישראל ישראלי").fill("טסט מזהה");
+      await page.locator('#apply input[type="tel"]').fill("0501234567");
+      await page.locator('#apply input[type="email"]').fill("id@test.com");
+      await page.getByRole("button", { name: "המשך" }).click();
+      await page.waitForTimeout(400);
+    }
+
+    test("rejects invalid Israeli ID", async ({ page }) => {
+      await toStep2(page);
+      const idInput = page.getByPlaceholder("123456789");
+      await idInput.fill("123456789"); // invalid checksum
+      await idInput.blur();
+      await page.waitForTimeout(200);
+      await expect(page.getByText("מספר תעודת זהות לא תקין")).toBeVisible();
+    });
+
+    test("accepts valid Israeli ID", async ({ page }) => {
+      await toStep2(page);
+      const idInput = page.getByPlaceholder("123456789");
+      await idInput.fill("032458721"); // valid checksum (from webhook example)
+      await idInput.blur();
+      await page.waitForTimeout(200);
+      await expect(page.getByText("מספר תעודת זהות לא תקין")).not.toBeVisible();
+    });
+  });
+
   test.describe("Full submission flow", () => {
 
     test("completes the full wizard and shows success", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -185,10 +217,12 @@ test.describe("Apply Wizard — Full E2E", () => {
       await page.getByRole("button", { name: "המשך" }).click();
       await page.waitForTimeout(400);
 
-      // Step 2
+      // Step 2 — new fields
+      await page.getByPlaceholder("123456789").fill("032458721"); // valid ID
+      await page.locator('#apply input[type="date"]').fill("1995-06-15");
+      await page.locator("select").first().selectOption("male"); // gender
       await page.getByPlaceholder("התחילו להקליד...").fill("באר שבע");
-      await page.locator("select").first().selectOption("25-30");
-      await page.locator("select").nth(1).selectOption("אין ניסיון");
+      await page.locator("select").nth(1).selectOption("אין ניסיון"); // background
 
       // Submit
       await page.getByRole("button", { name: "שליחה" }).click();
@@ -203,7 +237,7 @@ test.describe("Apply Wizard — Full E2E", () => {
     });
 
     test("step 2 requires city before submission", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
@@ -218,8 +252,8 @@ test.describe("Apply Wizard — Full E2E", () => {
       await page.getByRole("button", { name: "שליחה" }).click();
       await page.waitForTimeout(300);
 
-      // Should show city required error
-      await expect(page.getByText("שדה חובה")).toBeVisible();
+      // Should show required errors (multiple fields now required)
+      await expect(page.getByText("שדה חובה").first()).toBeVisible();
 
       // Should NOT show success
       await expect(page.getByText("תודה!")).not.toBeVisible();
@@ -229,7 +263,7 @@ test.describe("Apply Wizard — Full E2E", () => {
   test.describe("Progress bar", () => {
 
     test("progress bar advances with steps", async ({ page }) => {
-      await page.goto(SITE, { waitUntil: "networkidle" });
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
 
