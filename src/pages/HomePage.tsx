@@ -15,7 +15,7 @@ function CodeBlock() {
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "50px" }}
       transition={{ duration: 0.7, delay: 0.2 }}
-      className="relative mx-auto mt-20 max-w-lg overflow-hidden"
+      className="relative mx-auto mt-24 max-w-lg overflow-hidden"
       style={{ borderRadius: "20px", background: "#0B0B5D", padding: "32px", boxShadow: "0 24px 48px rgba(11,11,93,0.2), 0 8px 16px rgba(11,11,93,0.1)" }}
     >
       <div className="flex gap-2 mb-5">
@@ -94,7 +94,7 @@ export function HomePage() {
       </section>
 
       {/* ═══ What is Sig ═══ */}
-      <section id="what" className="py-48 px-6" style={{ background: "#f9fafb" }}>
+      <section id="what" className="py-56 px-6" style={{ background: "#f9fafb" }}>
         <div className="max-w-3xl mx-auto">
           <motion.div {...fade} className="text-center mb-6">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#EEF2FF", color: "#214CC9" }}>הטכנולוגיה</span>
@@ -115,7 +115,7 @@ export function HomePage() {
       </section>
 
       {/* ═══ Program — Timeline Cards ═══ */}
-      <section id="program" className="py-48 px-6">
+      <section id="program" className="py-56 px-6">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fade} className="text-center mb-24">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#FEF2F2", color: "#F56345" }}>המסלול</span>
@@ -157,7 +157,7 @@ export function HomePage() {
       </section>
 
       {/* ═══ Who ═══ */}
-      <section id="audience" className="py-48 px-6" style={{ background: "#f9fafb" }}>
+      <section id="audience" className="py-56 px-6" style={{ background: "#f9fafb" }}>
         <div className="max-w-3xl mx-auto text-center">
           <motion.div {...fade} className="mb-20">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#FFF7ED", color: "#F79534" }}>קהל יעד</span>
@@ -194,7 +194,7 @@ export function HomePage() {
       </section>
 
       {/* ═══ Partners — Carousel style ═══ */}
-      <section id="partners" className="py-48 px-6">
+      <section id="partners" className="py-56 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fade} className="mb-20">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#EEF2FF", color: "#214CC9" }}>שותפים</span>
@@ -233,7 +233,7 @@ export function HomePage() {
       </section>
 
       {/* ═══ Apply ═══ */}
-      <section id="apply" className="py-48 px-6" style={{ background: "#f9fafb" }}>
+      <section id="apply" className="py-56 px-6" style={{ background: "#f9fafb" }}>
         <div className="max-w-lg mx-auto text-center">
           <motion.div {...fade} className="mb-16">
             <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#E8F5E9", color: "#2e7d32" }}>פתוח להרשמה</span>
