@@ -58,17 +58,23 @@ export function buildWebhookPayload(input: ApplicationInput): WebhookPayload {
 }
 
 /**
- * Fire the webhook. Make.com hooks accept a JSON string body with a
- * text/plain content type, which is allowed under no-cors mode
- * (browsers restrict Content-Type to simple values for no-cors requests).
- * no-cors ensures the request never fails on CORS and never blocks the UX.
+ * Fire the webhook. We send the payload as application/x-www-form-urlencoded
+ * so Make.com parses each field into its own top-level key (names, email,
+ * phone, ...) rather than a single "value" blob (which is what happens when
+ * a raw JSON string is sent as text/plain).
+ *
+ * URLSearchParams produces a form-encoded body and sets the matching
+ * Content-Type automatically — a "simple" request that is allowed under
+ * no-cors mode, so the request never fails on CORS and never blocks the UX.
  */
 export async function sendToWebhook(input: ApplicationInput): Promise<void> {
   const payload = buildWebhookPayload(input);
+  const body = new URLSearchParams(
+    payload as unknown as Record<string, string>
+  );
   await fetch(WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "text/plain;charset=UTF-8" },
-    body: JSON.stringify(payload),
+    body,
     mode: "no-cors",
   });
 }
