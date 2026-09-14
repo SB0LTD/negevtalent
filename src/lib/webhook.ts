@@ -6,7 +6,7 @@
 const WEBHOOK_URL = "https://hook.eu1.make.com/6g2ak1dd5jg5kw4h94q7k956hl2iqccm";
 
 // Fixed course ID for the Sig bootcamp in the partner CRM.
-const COURSE_ID = "12592999035";
+const COURSE_ID = "12987820829";
 
 export interface WebhookPayload {
   names: string;
