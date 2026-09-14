@@ -45,10 +45,10 @@ export function HomePage() {
   return (
     <>
       {/* ═══ Hero ═══ */}
-      <section className="min-h-screen flex flex-col items-center px-6 pt-40 pb-16 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-center gap-20 px-6 pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "radial-gradient(circle, #0B0B5D 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative max-w-3xl mx-auto text-center flex-1 flex flex-col justify-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative max-w-3xl mx-auto text-center">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-8" style={{ color: "#214CC9" }}>
             Bootcamp · 3 Months · Negev
           </p>
@@ -76,10 +76,10 @@ export function HomePage() {
           </div>
         </motion.div>
 
-        {/* Logo carousel — pinned near the bottom with clear separation */}
+        {/* Logo carousel */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }}
-          className="relative shrink-0 w-full max-w-md mx-auto overflow-hidden"
-          style={{ marginTop: "clamp(4rem, 12vh, 10rem)", maskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)", WebkitMaskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)" }}>
+          className="relative w-full max-w-md mx-auto overflow-hidden"
+          style={{ maskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)", WebkitMaskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)" }}>
           <motion.div animate={{ x: ["0%", "-50%"] }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="flex items-center gap-16 w-max">
             {[...Array(2)].map((_, set) => (
               <div key={set} className="flex items-center gap-16 shrink-0">
