@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "@/lib/firebase";
 import { sendToWebhook } from "@/lib/webhook";
+import "./ApplyWizard.css";
 
 /* ─── Types ─── */
 interface FormData {
@@ -31,7 +33,6 @@ interface FieldError {
 const STEPS = [
   { id: "personal", label: "פרטים אישיים" },
   { id: "details", label: "פרטים נוספים" },
-  { id: "done", label: "סיום" },
 ];
 
 const NEGEV_CITIES = [
@@ -77,7 +78,6 @@ function validateIdNum(v: string): string | undefined {
   if (!v.trim()) return "שדה חובה";
   const id = v.trim();
   if (!/^\d{5,9}$/.test(id)) return "מספר תעודת זהות לא תקין";
-  // Israeli ID checksum (Luhn-like)
   const padded = id.padStart(9, "0");
   let sum = 0;
   for (let i = 0; i < 9; i++) {
@@ -108,6 +108,7 @@ function validateGender(v: string): string | undefined {
 
 /* ─── Main Component ─── */
 export function ApplyWizard() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -120,7 +121,6 @@ export function ApplyWizard() {
 
   const set = (field: keyof FormData, value: string) => {
     setData((prev) => ({ ...prev, [field]: value }));
-    // Clear error on change
     if (errors[field as keyof FieldError]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -165,7 +165,6 @@ export function ApplyWizard() {
     setSubmitting(true);
     const cleanPhone = data.phone.replace(/[\s\-()]/g, "");
 
-    // 1. Store in Firestore
     try {
       const db = getFirestore(app);
       await addDoc(collection(db, "applications"), {
@@ -181,7 +180,6 @@ export function ApplyWizard() {
       localStorage.setItem("pending_applications", JSON.stringify(pending));
     }
 
-    // 2. Sync to CRM webhook (fire-and-forget, never blocks UX)
     try {
       await sendToWebhook({
         name: data.name,
@@ -196,27 +194,26 @@ export function ApplyWizard() {
       console.error("Webhook error:", err);
     }
 
-    setDir(1);
-    setStep(2);
     setSubmitting(false);
+    navigate("/thank-you");
   };
 
   return (
-    <div className="max-w-lg mx-auto w-full">
+    <div className="wizard">
       {/* Progress */}
-      <div className="flex items-center gap-2 mb-10">
+      <div className="wizard__progress">
         {STEPS.map((s, i) => (
-          <div key={s.id} className="flex-1 flex flex-col items-center gap-2">
-            <div className="w-full h-1 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
+          <div key={s.id} className="wizard__step">
+            <div className="wizard__bar">
               <motion.div
-                className="h-full rounded-full"
+                className="wizard__bar-fill"
                 style={{ backgroundColor: i <= step ? "#214CC9" : "#f3f4f6" }}
                 initial={{ width: "0%" }}
                 animate={{ width: i <= step ? "100%" : "0%" }}
                 transition={{ duration: 0.4 }}
               />
             </div>
-            <span className="text-xs" style={{ color: i <= step ? "#0B0B5D" : "#9ca3af" }}>
+            <span className="wizard__step-label" style={{ color: i <= step ? "#0B0B5D" : "#9ca3af" }}>
               {s.label}
             </span>
           </div>
@@ -224,114 +221,61 @@ export function ApplyWizard() {
       </div>
 
       {/* Steps */}
-      <div className="relative overflow-hidden min-h-[360px]">
+      <div className="wizard__stage">
         <AnimatePresence mode="wait" custom={dir}>
           {step === 0 && (
-            <motion.div key="s1" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="space-y-5">
-              <h3 className="text-xl font-bold mb-6" style={{ color: "#0B0B5D" }}>ספרו לנו קצת על עצמכם</h3>
-              <FormInput
-                label="שם מלא"
-                placeholder="ישראל ישראלי"
-                value={data.name}
+            <motion.div key="s1" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="wizard__fields">
+              <h3 className="wizard__heading">ספרו לנו קצת על עצמכם</h3>
+              <FormInput label="שם מלא" placeholder="ישראל ישראלי" value={data.name}
                 onChange={(v) => set("name", v)}
                 onBlur={() => { touch("name"); setErrors((e) => ({ ...e, name: validateName(data.name) })); }}
-                error={touched.name ? errors.name : undefined}
-              />
-              <FormInput
-                label="טלפון"
-                placeholder="050-1234567"
-                value={data.phone}
+                error={touched.name ? errors.name : undefined} />
+              <FormInput label="טלפון" placeholder="050-1234567" value={data.phone}
                 onChange={(v) => set("phone", formatPhone(v))}
                 onBlur={() => { touch("phone"); setErrors((e) => ({ ...e, phone: validatePhone(data.phone) })); }}
-                error={touched.phone ? errors.phone : undefined}
-                type="tel"
-                dir="ltr"
-              />
-              <FormInput
-                label="אימייל"
-                placeholder="you@example.com"
-                value={data.email}
+                error={touched.phone ? errors.phone : undefined} type="tel" dir="ltr" />
+              <FormInput label="אימייל" placeholder="you@example.com" value={data.email}
                 onChange={(v) => set("email", v)}
                 onBlur={() => { touch("email"); setErrors((e) => ({ ...e, email: validateEmail(data.email) })); }}
-                error={touched.email ? errors.email : undefined}
-                type="email"
-                dir="ltr"
-              />
+                error={touched.email ? errors.email : undefined} type="email" dir="ltr" />
             </motion.div>
           )}
 
           {step === 1 && (
-            <motion.div key="s2" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="space-y-5">
-              <h3 className="text-xl font-bold mb-6" style={{ color: "#0B0B5D" }}>עוד כמה פרטים</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput
-                  label="תעודת זהות"
-                  placeholder="123456789"
-                  value={data.idNum}
+            <motion.div key="s2" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="wizard__fields">
+              <h3 className="wizard__heading">עוד כמה פרטים</h3>
+              <div className="wizard__row2">
+                <FormInput label="תעודת זהות" placeholder="123456789" value={data.idNum}
                   onChange={(v) => set("idNum", v.replace(/\D/g, "").slice(0, 9))}
                   onBlur={() => { touch("idNum"); setErrors((e) => ({ ...e, idNum: validateIdNum(data.idNum) })); }}
-                  error={touched.idNum ? errors.idNum : undefined}
-                  type="text"
-                  dir="ltr"
-                />
-                <FormInput
-                  label="תאריך לידה"
-                  value={data.birthdate}
+                  error={touched.idNum ? errors.idNum : undefined} type="text" dir="ltr" />
+                <FormInput label="תאריך לידה" value={data.birthdate}
                   onChange={(v) => set("birthdate", v)}
                   onBlur={() => { touch("birthdate"); setErrors((e) => ({ ...e, birthdate: validateBirthdate(data.birthdate) })); }}
-                  error={touched.birthdate ? errors.birthdate : undefined}
-                  type="date"
-                  dir="ltr"
-                />
+                  error={touched.birthdate ? errors.birthdate : undefined} type="date" dir="ltr" />
               </div>
-              <FormSelect
-                label="מגדר"
-                value={data.gender}
+              <FormSelect label="מגדר" value={data.gender}
                 onChange={(v) => { set("gender", v); setErrors((e) => ({ ...e, gender: undefined })); }}
-                options={[{ label: "זכר", value: "male" }, { label: "נקבה", value: "female" }, { label: "אחר", value: "other" }]}
-                error={touched.gender ? errors.gender : undefined}
-              />
-              <CityAutocomplete
-                value={data.city}
+                options={[{ label: "זכר", value: "7" }, { label: "נקבה", value: "0" }, { label: "אחר", value: "1" }]}
+                error={touched.gender ? errors.gender : undefined} />
+              <CityAutocomplete value={data.city}
                 onChange={(v) => set("city", v)}
                 onBlur={() => { touch("city"); setErrors((e) => ({ ...e, city: validateCity(data.city) })); }}
-                error={touched.city ? errors.city : undefined}
-              />
-              <FormSelect
-                label="ניסיון קודם בתכנות"
-                value={data.background}
+                error={touched.city ? errors.city : undefined} />
+              <FormSelect label="ניסיון קודם בתכנות" value={data.background}
                 onChange={(v) => set("background", v)}
-                options={["אין ניסיון", "למדתי קצת בעצמי", "קורס / לימודים", "ניסיון מקצועי"]}
-              />
+                options={["אין ניסיון", "למדתי קצת בעצמי", "קורס / לימודים", "ניסיון מקצועי"]} />
             </motion.div>
           )}
 
-          {step === 2 && (
-            <motion.div key="s3" custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }} className="flex flex-col items-center justify-center text-center py-12">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
-                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
-                style={{ backgroundColor: "#e8f5e9" }}
-              >
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="#2e7d32" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </motion.div>
-              <h3 className="text-2xl font-bold mb-3" style={{ color: "#0B0B5D" }}>תודה!</h3>
-              <p style={{ color: "#6b7280" }}>קיבלנו את הפרטים שלכם. נחזור אליכם בקרוב.</p>
-            </motion.div>
-          )}
         </AnimatePresence>
       </div>
 
       {/* Navigation */}
       {step < 2 && (
-        <div className="flex items-center gap-3 mt-8">
+        <div className="wizard__nav">
           {step === 1 && (
-            <motion.button type="button" onClick={back} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              style={{ padding: "16px 28px", borderRadius: "14px", fontSize: "15px", fontWeight: 500, border: "1.5px solid #e5e7eb", background: "#fff", color: "#0B0B5D", cursor: "pointer" }}>
+            <motion.button type="button" onClick={back} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="wizard__btn wizard__btn--back">
               חזרה
             </motion.button>
           )}
@@ -341,12 +285,9 @@ export function ApplyWizard() {
             disabled={submitting}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            style={{
-              flex: 1, padding: "16px 28px", borderRadius: "14px", fontSize: "16px", fontWeight: 600, border: "none",
-              background: "linear-gradient(135deg, #0B0B5D 0%, #214CC9 100%)", color: "#fff", cursor: "pointer",
-              boxShadow: "0 4px 20px rgba(11,11,93,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
-              opacity: submitting ? 0.7 : 1,
-            }}>
+            className="wizard__btn wizard__btn--primary"
+            style={{ opacity: submitting ? 0.7 : 1 }}
+          >
             {submitting ? "שולח..." : step === 1 ? "שליחה" : "המשך"}
           </motion.button>
         </div>
@@ -362,8 +303,8 @@ function FormInput({ label, placeholder, value, onChange, onBlur, error, type = 
   error?: string; type?: string; dir?: string;
 }) {
   return (
-    <div>
-      <label className="block text-sm font-medium mb-1.5" style={{ color: "#374151" }}>{label}</label>
+    <div className="field">
+      <label className="field__label">{label}</label>
       <input
         type={type}
         dir={dir}
@@ -371,18 +312,11 @@ function FormInput({ label, placeholder, value, onChange, onBlur, error, type = 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
-        className="w-full outline-none transition-all"
-        style={{
-          padding: "14px 16px", borderRadius: "10px", fontSize: "15px",
-          border: `1.5px solid ${error ? "#ef4444" : "#e5e7eb"}`,
-          background: error ? "#fef2f2" : "#fafafa",
-        }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#214CC9"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? "rgba(239,68,68,0.08)" : "rgba(33,76,201,0.06)"}`; }}
-        onBlurCapture={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#e5e7eb"; e.currentTarget.style.background = error ? "#fef2f2" : "#fafafa"; e.currentTarget.style.boxShadow = "none"; }}
+        className={`field__input${error ? " field__input--error" : ""}`}
       />
       <AnimatePresence>
         {error && (
-          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-xs mt-1.5" style={{ color: "#ef4444" }}>
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="field__error">
             {error}
           </motion.p>
         )}
@@ -399,27 +333,20 @@ function FormSelect({ label, value, onChange, options, error }: {
 }) {
   const normalized = options.map((o) => typeof o === "string" ? { label: o, value: o } : o);
   return (
-    <div>
-      <label className="block text-sm font-medium mb-1.5" style={{ color: "#374151" }}>{label}</label>
+    <div className="field">
+      <label className="field__label">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full outline-none transition-all appearance-none cursor-pointer"
-        style={{
-          padding: "14px 16px", borderRadius: "10px", fontSize: "15px",
-          border: `1.5px solid ${error ? "#ef4444" : "#e5e7eb"}`,
-          background: error ? "#fef2f2" : "#fafafa",
-          color: value ? "#0B0B5D" : "#9ca3af",
-        }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#214CC9"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? "rgba(239,68,68,0.08)" : "rgba(33,76,201,0.06)"}`; }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#e5e7eb"; e.currentTarget.style.background = error ? "#fef2f2" : "#fafafa"; e.currentTarget.style.boxShadow = "none"; }}
+        className={`field__select${error ? " field__select--error" : ""}`}
+        style={{ color: value ? "#0B0B5D" : "#9ca3af" }}
       >
         <option value="" disabled>בחרו...</option>
         {normalized.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
       <AnimatePresence>
         {error && (
-          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-xs mt-1.5" style={{ color: "#ef4444" }}>
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="field__error">
             {error}
           </motion.p>
         )}
@@ -434,7 +361,6 @@ function CityAutocomplete({ value, onChange, onBlur, error }: {
 }) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const filter = useCallback((query: string) => {
@@ -445,39 +371,27 @@ function CityAutocomplete({ value, onChange, onBlur, error }: {
     setOpen(matches.length > 0);
   }, []);
 
-  useEffect(() => {
-    filter(value);
-  }, [value, filter]);
+  useEffect(() => { filter(value); }, [value, filter]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   return (
-    <div ref={containerRef} className="relative">
-      <label className="block text-sm font-medium mb-1.5" style={{ color: "#374151" }}>עיר מגורים</label>
+    <div ref={containerRef} className="field field--relative">
+      <label className="field__label">עיר מגורים</label>
       <input
-        ref={inputRef}
         type="text"
         placeholder="התחילו להקליד..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => { if (suggestions.length) setOpen(true); }}
         onBlur={() => { setTimeout(() => { setOpen(false); onBlur?.(); }, 150); }}
-        className="w-full outline-none transition-all"
-        style={{
-          padding: "14px 16px", borderRadius: "10px", fontSize: "15px",
-          border: `1.5px solid ${error ? "#ef4444" : "#e5e7eb"}`,
-          background: error ? "#fef2f2" : "#fafafa",
-        }}
-        onFocusCapture={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#214CC9"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? "rgba(239,68,68,0.08)" : "rgba(33,76,201,0.06)"}`; }}
-        onBlurCapture={(e) => { e.currentTarget.style.borderColor = error ? "#ef4444" : "#e5e7eb"; e.currentTarget.style.background = error ? "#fef2f2" : "#fafafa"; e.currentTarget.style.boxShadow = "none"; }}
+        className={`field__input${error ? " field__input--error" : ""}`}
       />
       <AnimatePresence>
         {open && suggestions.length > 0 && (
@@ -486,19 +400,11 @@ function CityAutocomplete({ value, onChange, onBlur, error }: {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full mt-1 w-full z-50 overflow-hidden"
-            style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "10px", boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
+            className="field__suggestions"
           >
             {suggestions.map((city) => (
-              <li
-                key={city}
-                className="cursor-pointer transition-colors"
-                style={{ padding: "12px 16px", fontSize: "14px" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#f3f4f6"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "#fff"; }}
-                onMouseDown={() => { onChange(city); setOpen(false); }}
-              >
-                <span style={{ color: "#0B0B5D" }}>{city}</span>
+              <li key={city} className="field__suggestion" onMouseDown={() => { onChange(city); setOpen(false); }}>
+                {city}
               </li>
             ))}
           </motion.ul>
@@ -506,7 +412,7 @@ function CityAutocomplete({ value, onChange, onBlur, error }: {
       </AnimatePresence>
       <AnimatePresence>
         {error && (
-          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-xs mt-1.5" style={{ color: "#ef4444" }}>
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="field__error">
             {error}
           </motion.p>
         )}

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const SITE = "https://negev.sb0.tech";
+const SITE = process.env.SITE_URL || "https://negev.sb0.tech";
 
 test.describe("Apply Wizard — Full E2E", () => {
 
@@ -206,6 +206,14 @@ test.describe("Apply Wizard — Full E2E", () => {
   test.describe("Full submission flow", () => {
 
     test("completes the full wizard and shows success", async ({ page }) => {
+      // Capture the outgoing webhook body so we can assert the exact gender code synced.
+      let webhookBody: string | null = null;
+      page.on("request", (req) => {
+        if (req.url().includes("hook.eu1.make.com")) {
+          webhookBody = req.postData();
+        }
+      });
+
       await page.goto(SITE, { waitUntil: "domcontentloaded" });
       await page.locator("#apply").scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
@@ -220,17 +228,23 @@ test.describe("Apply Wizard — Full E2E", () => {
       // Step 2 — new fields
       await page.getByPlaceholder("123456789").fill("032458721"); // valid ID
       await page.locator('#apply input[type="date"]').fill("1995-06-15");
-      await page.locator("select").first().selectOption("male"); // gender
+      await page.locator("select").first().selectOption({ label: "זכר" }); // gender
       await page.getByPlaceholder("התחילו להקליד...").fill("באר שבע");
       await page.locator("select").nth(1).selectOption("אין ניסיון"); // background
 
       // Submit
       await page.getByRole("button", { name: "שליחה" }).click();
-      await page.waitForTimeout(3000);
 
-      // Should show success
-      await expect(page.getByText("תודה!")).toBeVisible();
+      // Should redirect to the dedicated Thank You page
+      await page.waitForURL("**/thank-you", { timeout: 10000 });
+      await expect(page.getByText("תודה שנרשמתם")).toBeVisible();
       await expect(page.getByText("קיבלנו את הפרטים שלכם")).toBeVisible();
+      await expect(page.getByRole("link", { name: "חזרה לדף הבית" })).toBeVisible();
+
+      // The synced webhook must carry the exact CRM gender code for "זכר" (7), never the old fallback.
+      expect(webhookBody, "webhook request was not sent").not.toBeNull();
+      const params = new URLSearchParams(webhookBody as unknown as string);
+      expect(params.get("gender")).toBe("7");
 
       // Screenshot
       await page.screenshot({ path: "tests/screenshots/form-e2e-success.png" });
@@ -257,6 +271,72 @@ test.describe("Apply Wizard — Full E2E", () => {
 
       // Should NOT show success
       await expect(page.getByText("תודה!")).not.toBeVisible();
+    });
+  });
+
+  test.describe("Navigation after submission", () => {
+
+    async function submitAndReachThankYou(page: import("@playwright/test").Page) {
+      await page.goto(SITE, { waitUntil: "domcontentloaded" });
+      await page.locator("#apply").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(500);
+
+      // Step 1
+      await page.getByPlaceholder("ישראל ישראלי").fill("Nav After Submit");
+      await page.locator('#apply input[type="tel"]').fill("0506666666");
+      await page.locator('#apply input[type="email"]').fill("navafter@e2e.test");
+      await page.getByRole("button", { name: "המשך" }).click();
+      await page.waitForTimeout(400);
+
+      // Step 2
+      await page.getByPlaceholder("123456789").fill("032458721");
+      await page.locator('#apply input[type="date"]').fill("1994-03-10");
+      await page.locator("select").first().selectOption({ label: "זכר" });
+      await page.getByPlaceholder("התחילו להקליד...").fill("באר שבע");
+      await page.locator("select").nth(1).selectOption("אין ניסיון");
+
+      await page.getByRole("button", { name: "שליחה" }).click();
+      await page.waitForURL("**/thank-you", { timeout: 10000 });
+    }
+
+    test("header nav links work after submission", async ({ page }) => {
+      await submitAndReachThankYou(page);
+
+      // Click a nav link from the Thank You page — it must route home and scroll to the section.
+      await page.getByRole("link", { name: "התוכנית" }).first().click();
+
+      await page.waitForURL((url) => !url.pathname.includes("thank-you"), { timeout: 10000 });
+      await expect(page).toHaveURL(/\/#program$/);
+
+      const program = page.locator("#program");
+      await expect(program).toBeVisible();
+
+      // The section should actually be scrolled into the viewport, not left at the top.
+      await page.waitForTimeout(1000);
+      const inView = await program.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top < window.innerHeight && r.bottom > 0;
+      });
+      expect(inView).toBe(true);
+    });
+
+    test("logo returns home after submission", async ({ page }) => {
+      await submitAndReachThankYou(page);
+
+      await page.getByRole("link", { name: "Negev Talent" }).first().click();
+      await page.waitForURL((url) => !url.pathname.includes("thank-you"), { timeout: 10000 });
+
+      // Hero (home-only content) must be present again.
+      await expect(page.locator(".hero__title")).toBeVisible();
+    });
+
+    test("apply CTA works after submission", async ({ page }) => {
+      await submitAndReachThankYou(page);
+
+      await page.getByRole("link", { name: "הרשמה ←" }).first().click();
+      await page.waitForURL((url) => !url.pathname.includes("thank-you"), { timeout: 10000 });
+      await expect(page).toHaveURL(/\/#apply$/);
+      await expect(page.locator("#apply")).toBeVisible();
     });
   });
 

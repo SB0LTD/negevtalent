@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { ApplyWizard } from "@/components/ApplyWizard";
+import "./HomePage.css";
 
 const fade = {
   initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "100px" },
+  viewport: { once: true, margin: "-60px" },
   transition: { duration: 0.6 },
 };
 
@@ -13,17 +14,16 @@ function CodeBlock() {
     <motion.div
       initial={{ opacity: 0, scale: 0.96 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "50px" }}
-      transition={{ duration: 0.7, delay: 0.2 }}
-      className="relative mx-auto mt-24 max-w-lg overflow-hidden"
-      style={{ borderRadius: "20px", background: "#0B0B5D", padding: "32px", boxShadow: "0 24px 48px rgba(11,11,93,0.2), 0 8px 16px rgba(11,11,93,0.1)" }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.7, delay: 0.1 }}
+      className="code-block"
     >
-      <div className="flex gap-2 mb-5">
-        <span className="w-3 h-3 rounded-full" style={{ background: "#F56345" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#F79534" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#80A0E9" }} />
+      <div className="code-block__dots">
+        <span className="code-block__dot" style={{ background: "#F56345" }} />
+        <span className="code-block__dot" style={{ background: "#F79534" }} />
+        <span className="code-block__dot" style={{ background: "#80A0E9" }} />
       </div>
-      <pre className="text-sm leading-relaxed overflow-x-auto" dir="ltr" style={{ color: "#80A0E9", fontFamily: "monospace" }}>
+      <pre>
         <code>{`// main.sig — you control every byte
 const buf: [4096]u8 = undefined;
 
@@ -35,8 +35,8 @@ const result = try sig.fmt.formatInto(
 // No silent reallocation.
 // Memory is not a guess.`}</code>
       </pre>
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl" style={{ background: "rgba(33,76,201,0.3)" }} />
-      <div className="absolute -bottom-12 -left-12 w-28 h-28 rounded-full blur-3xl" style={{ background: "rgba(245,99,69,0.15)" }} />
+      <div className="code-block__glow-1" />
+      <div className="code-block__glow-2" />
     </motion.div>
   );
 }
@@ -45,84 +45,77 @@ export function HomePage() {
   return (
     <>
       {/* ═══ Hero ═══ */}
-      <section className="min-h-screen flex flex-col items-center justify-center gap-20 px-6 pt-32 pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "radial-gradient(circle, #0B0B5D 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <section className="hero">
+        <div className="hero__grid" />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative max-w-3xl mx-auto text-center">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-8" style={{ color: "#214CC9" }}>
-            Bootcamp · 3 Months · Negev
-          </p>
-          <h1 className="text-5xl md:text-7xl font-black leading-[1.12] tracking-tight" style={{ color: "#0B0B5D" }}>
-            למד לפתח
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-l from-blue to-red">ב-Sig</span>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="hero__content">
+          <p className="hero__eyebrow">Bootcamp · 3 Months · Negev</p>
+          <h1 className="hero__title">
+            למד לפתח <span className="hero__title-accent">ב-Sig</span>
           </h1>
-          <p className="mt-10 text-lg md:text-xl leading-loose max-w-xl mx-auto" style={{ color: "#4b5563" }}>
+          <p className="hero__subtitle">
             שלושה חודשים אינטנסיביים של לימודי פיתוח בשפת Sig.
             <br />
             בלי ניסיון קודם. בנגב. עם אפשרות תעסוקה בסוף.
           </p>
 
-          {/* Buttons */}
-          <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-5">
-            <motion.a href="#apply" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              style={{ background: "linear-gradient(135deg, #0B0B5D 0%, #214CC9 100%)", color: "#fff", padding: "18px 40px", borderRadius: "14px", fontSize: "16px", fontWeight: 600, boxShadow: "0 4px 20px rgba(11,11,93,0.25), inset 0 1px 0 rgba(255,255,255,0.1)", display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none", minWidth: "200px" }}>
+          <div className="hero__actions">
+            <motion.a href="#apply" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} className="btn btn--primary">
               הרשמה לתוכנית
             </motion.a>
-            <motion.a href="#what" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              style={{ background: "#fff", color: "#0B0B5D", padding: "18px 40px", borderRadius: "14px", fontSize: "16px", fontWeight: 500, border: "1.5px solid #e5e7eb", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none", minWidth: "200px" }}>
+            <motion.a href="#what" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} className="btn btn--ghost">
               מה זה Sig?
             </motion.a>
           </div>
         </motion.div>
 
         {/* Logo carousel */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }}
-          className="relative w-full max-w-md mx-auto overflow-hidden"
-          style={{ maskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)", WebkitMaskImage: "linear-gradient(to left, transparent, black 20%, black 80%, transparent)" }}>
-          <motion.div animate={{ x: ["0%", "-50%"] }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="flex items-center gap-16 w-max">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="carousel">
+          <div className="carousel__track">
             {[...Array(2)].map((_, set) => (
-              <div key={set} className="flex items-center gap-16 shrink-0">
-                <img src="/partners/elevation.png" alt="Elevation" className="h-7 w-auto object-contain opacity-50" />
-                <img src="/partners/sb0.png" alt="SB0 LTD" className="h-7 w-auto object-contain opacity-50" />
-                <img src="/logo.png" alt="Negev Talent" className="h-6 w-auto object-contain opacity-50" />
-                <img src="/partners/eshkol.png" alt="אשכול הנגב" className="h-7 w-auto object-contain opacity-50" />
+              <div key={set} className="carousel__set">
+                <img src="/partners/elevation.png" alt="Elevation" className="carousel__logo" />
+                <img src="/partners/sb0.png" alt="SB0 LTD" className="carousel__logo" />
+                <img src="/logo.png" alt="Negev Talent" className="carousel__logo" style={{ height: "1.5rem" }} />
+                <img src="/partners/eshkol.png" alt="אשכול הנגב" className="carousel__logo" />
               </div>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
       </section>
 
       {/* ═══ What is Sig ═══ */}
-      <section id="what" className="py-56 px-6" style={{ background: "#f9fafb" }}>
-        <div className="max-w-3xl mx-auto">
-          <motion.div {...fade} className="text-center mb-6">
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#EEF2FF", color: "#214CC9" }}>הטכנולוגיה</span>
-            <h2 className="text-3xl md:text-4xl font-bold leading-snug" style={{ color: "#0B0B5D" }}>מה זה Sig?</h2>
+      <section id="what" className="section section--soft">
+        <div className="container container--wide">
+          <motion.div {...fade} className="text-center" style={{ marginBottom: "3rem" }}>
+            <span className="eyebrow eyebrow--blue">הטכנולוגיה</span>
+            <h2 className="section-title">מה זה Sig?</h2>
           </motion.div>
 
-          <motion.div {...fade} className="text-center mt-12">
-            <p className="text-lg md:text-xl leading-loose max-w-2xl mx-auto" style={{ color: "#4b5563" }}>
-              <strong style={{ color: "#0B0B5D" }}>Sig</strong> הוא קומפיילר שמבוסס על Zig. אותה שפה בדיוק, אותם כלים. הדבר היחיד שמשתנה: כשקובץ נקרא <code style={{ background: "rgba(11,11,93,0.06)", padding: "2px 8px", borderRadius: "4px", color: "#0B0B5D", fontSize: "0.9em" }}>.sig</code> הקומפיילר כבר לא מרשה לך להקצות זיכרון בלי שתדע בדיוק לאן כל בייט הולך.
-            </p>
-            <p className="mt-8 text-lg md:text-xl leading-loose max-w-2xl mx-auto" style={{ color: "#4b5563" }}>
-              Sig נבנה ומתוחזק על ידי <strong style={{ color: "#0B0B5D" }}>SB0 LTD</strong>, ומסונכרן עם Zig בכל קומיט. מי שלומד את Sig לומד systems programming אמיתי, עם שליטה מלאה על כל מה שקורה מתחת למכסה.
-            </p>
-          </motion.div>
+          <div className="about-grid">
+            <motion.div {...fade} className="about-grid__prose">
+              <p>
+                <strong style={{ color: "var(--navy)" }}>Sig</strong> הוא קומפיילר שמבוסס על Zig. אותה שפה בדיוק, אותם כלים. הדבר היחיד שמשתנה: כשקובץ נקרא <code style={{ background: "rgba(11,11,93,0.06)", padding: "2px 8px", borderRadius: "4px", color: "var(--navy)", fontSize: "0.9em" }}>.sig</code> הקומפיילר כבר לא מרשה לך להקצות זיכרון בלי שתדע בדיוק לאן כל בייט הולך.
+              </p>
+              <p>
+                Sig נבנה ומתוחזק על ידי <strong style={{ color: "var(--navy)" }}>SB0 LTD</strong>, ומסונכרן עם Zig בכל קומיט. מי שלומד את Sig לומד systems programming אמיתי, עם שליטה מלאה על כל מה שקורה מתחת למכסה.
+              </p>
+            </motion.div>
 
-          <CodeBlock />
+            <CodeBlock />
+          </div>
         </div>
       </section>
 
       {/* ═══ Program — Timeline Cards ═══ */}
-      <section id="program" className="py-56 px-6">
-        <div className="max-w-5xl mx-auto">
-          <motion.div {...fade} className="text-center mb-24">
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#FEF2F2", color: "#F56345" }}>המסלול</span>
-            <h2 className="text-3xl md:text-4xl font-bold leading-snug" style={{ color: "#0B0B5D" }}>מה תלמדו בשלושה חודשים</h2>
+      <section id="program" className="section">
+        <div className="container container--wide">
+          <motion.div {...fade} className="section-head">
+            <span className="eyebrow eyebrow--red">המסלול</span>
+            <h2 className="section-title">מה תלמדו בשלושה חודשים</h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="phase-grid">
             {[
               { n: "01", title: "יסודות", color: "#214CC9", items: ["שפת Zig/Sig מהתחלה", "להבין איך זיכרון עובד", "מבני נתונים שימושיים", "סביבת עבודה וכלים"] },
               { n: "02", title: "פרקטיקה", color: "#F56345", items: ["לבנות פרויקטים אמיתיים", "לעבוד בצוות, לעשות Code Review", "קומפילציה, לינקינג, דיבאגינג", "לכתוב קוד ב-strict mode"] },
@@ -132,21 +125,18 @@ export function HomePage() {
                 key={i}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "80px" }}
+                viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="relative overflow-hidden"
-                style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: "18px", padding: "40px 36px", boxShadow: "0 2px 12px rgba(0,0,0,0.03)" }}
+                className="card phase-card"
               >
-                {/* Top accent line */}
-                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: phase.color }} />
-                <span className="text-4xl font-black" style={{ color: phase.color, opacity: 0.2 }}>{phase.n}</span>
-                <h3 className="text-xl font-bold mt-2 mb-6" style={{ color: "#0B0B5D" }}>{phase.title}</h3>
-                <ul className="space-y-4">
+                <div className="phase-card__accent" style={{ background: phase.color }} />
+                <span className="phase-card__num" style={{ color: phase.color }}>{phase.n}</span>
+                <h3 className="phase-card__title">{phase.title}</h3>
+                <ul className="phase-card__list">
                   {phase.items.map((item, j) => (
-                    <li key={j} className="flex items-start gap-3" style={{ color: "#4b5563" }}>
-                      <span className="mt-[9px] h-1.5 w-1.5 rounded-full shrink-0" style={{ background: phase.color, opacity: 0.7 }} />
-                      <span className="text-sm leading-loose">{item}</span>
+                    <li key={j} className="phase-card__item">
+                      <span className="phase-card__bullet" style={{ background: phase.color }} />
+                      <span className="phase-card__text">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -157,14 +147,14 @@ export function HomePage() {
       </section>
 
       {/* ═══ Who ═══ */}
-      <section id="audience" className="py-56 px-6" style={{ background: "#f9fafb" }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div {...fade} className="mb-20">
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#FFF7ED", color: "#F79534" }}>קהל יעד</span>
-            <h2 className="text-3xl md:text-4xl font-bold leading-snug" style={{ color: "#0B0B5D" }}>למי זה מתאים</h2>
+      <section id="audience" className="section section--soft">
+        <div className="container container--narrow text-center">
+          <motion.div {...fade} className="section-head">
+            <span className="eyebrow eyebrow--orange">קהל יעד</span>
+            <h2 className="section-title">למי זה מתאים</h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="audience-grid">
             {[
               "אנשים שמעוניינים בפיתוח low-level",
               "גרים בנגב ורוצים ללמוד מקומית",
@@ -175,17 +165,15 @@ export function HomePage() {
                 key={i}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "80px" }}
+                viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
-                whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                className="text-right cursor-default"
-                style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: "16px", padding: "28px 30px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}
+                className="card audience-card"
               >
-                <div className="flex items-center gap-4">
-                  <span className="h-9 w-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "#EEF2FF" }}>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#214CC9" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <div className="audience-card__row">
+                  <span className="audience-card__check">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#214CC9" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   </span>
-                  <p className="font-medium text-lg" style={{ color: "#0B0B5D" }}>{item}</p>
+                  <p className="audience-card__label">{item}</p>
                 </div>
               </motion.div>
             ))}
@@ -193,16 +181,16 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══ Partners — Carousel style ═══ */}
-      <section id="partners" className="py-56 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div {...fade} className="mb-20">
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#EEF2FF", color: "#214CC9" }}>שותפים</span>
-            <h2 className="text-3xl md:text-4xl font-bold leading-snug" style={{ color: "#0B0B5D" }}>מי עומד מאחורי זה</h2>
-            <p className="mt-5 text-lg" style={{ color: "#6b7280" }}>התוכנית רצה בשיתוף פעולה של כמה גופים</p>
+      {/* ═══ Partners ═══ */}
+      <section id="partners" className="section">
+        <div className="container container--wide text-center">
+          <motion.div {...fade} className="section-head">
+            <span className="eyebrow eyebrow--blue">שותפים</span>
+            <h2 className="section-title">מי עומד מאחורי זה</h2>
+            <p className="section-lead">התוכנית רצה בשיתוף פעולה של כמה גופים</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="partner-grid">
             {[
               { name: "Elevation", role: "מנהלים את ההכשרה", logo: "/partners/elevation.png" },
               { name: "SB0 LTD", role: "הטכנולוגיה והתעסוקה", logo: "/partners/sb0.png" },
@@ -213,18 +201,16 @@ export function HomePage() {
                 key={i}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "80px" }}
+                viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className="flex flex-col items-center gap-5"
-                style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: "18px", padding: "36px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}
+                className="card partner-card"
               >
-                <div className="h-12 flex items-center justify-center">
-                  <img src={p.logo} alt={p.name} className="h-9 max-w-[100px] w-auto object-contain" />
+                <div className="partner-card__logobox">
+                  <img src={p.logo} alt={p.name} className="partner-card__logo" />
                 </div>
                 <div className="text-center">
-                  <p className="font-semibold text-sm" style={{ color: "#0B0B5D" }}>{p.name}</p>
-                  <p className="text-xs mt-1" style={{ color: "#9ca3af" }}>{p.role}</p>
+                  <p className="partner-card__name">{p.name}</p>
+                  <p className="partner-card__role">{p.role}</p>
                 </div>
               </motion.div>
             ))}
@@ -233,12 +219,12 @@ export function HomePage() {
       </section>
 
       {/* ═══ Apply ═══ */}
-      <section id="apply" className="py-56 px-6" style={{ background: "#f9fafb" }}>
-        <div className="max-w-lg mx-auto text-center">
-          <motion.div {...fade} className="mb-16">
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ background: "#E8F5E9", color: "#2e7d32" }}>פתוח להרשמה</span>
-            <h2 className="text-3xl md:text-4xl font-bold leading-snug" style={{ color: "#0B0B5D" }}>הרשמה</h2>
-            <p className="mt-5 text-lg leading-relaxed" style={{ color: "#6b7280" }}>המחזור הקרוב מתחיל בקרוב. תשאירו פרטים ונחזור אליכם</p>
+      <section id="apply" className="section section--soft">
+        <div className="container" style={{ maxWidth: "32rem" }}>
+          <motion.div {...fade} className="section-head" style={{ marginBottom: "3.5rem" }}>
+            <span className="eyebrow eyebrow--green">פתוח להרשמה</span>
+            <h2 className="section-title">הרשמה</h2>
+            <p className="section-lead">המחזור הקרוב מתחיל בקרוב. תשאירו פרטים ונחזור אליכם</p>
           </motion.div>
           <ApplyWizard />
         </div>

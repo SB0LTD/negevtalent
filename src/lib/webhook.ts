@@ -24,17 +24,15 @@ export interface ApplicationInput {
   email: string;
   phone: string; // local format e.g. 0501234567
   city: string;
-  gender: string; // "male" | "female" | "other"
+  gender: string; // CRM numeric code: "7" (male) | "0" (female) | "1" (other)
   birthdate: string; // YYYY-MM-DD
   idNum: string;
 }
 
-// CRM gender codes.
-const GENDER_CODES: Record<string, string> = {
-  male: "6",
-  female: "7",
-  other: "8",
-};
+// Valid CRM gender codes. These are the exact values the form emits and the
+// CRM expects — the form is the single source of truth, this set only guards
+// against anything unexpected reaching the webhook.
+const VALID_GENDER_CODES = new Set(["7", "0", "1"]);
 
 /** Convert a local Israeli phone (0501234567) to international (+972501234567). */
 export function toInternationalPhone(local: string): string {
@@ -45,12 +43,16 @@ export function toInternationalPhone(local: string): string {
 }
 
 export function buildWebhookPayload(input: ApplicationInput): WebhookPayload {
+  const gender = input.gender.trim();
+  if (!VALID_GENDER_CODES.has(gender)) {
+    throw new Error(`Invalid gender code: "${gender}". Expected one of 7, 0, 1.`);
+  }
   return {
     names: input.name.trim(),
     email: input.email.trim(),
     phone: toInternationalPhone(input.phone),
     city: input.city.trim(),
-    gender: GENDER_CODES[input.gender] ?? "8",
+    gender,
     datetime: input.birthdate,
     id_num: input.idNum.trim(),
     courses1: COURSE_ID,

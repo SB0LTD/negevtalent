@@ -29,3 +29,7 @@ negev-talent-brand-folder/
 
 # Graphify
 graphify-out/
+
+# Playwright test output
+playwright-report/
+tests/results/

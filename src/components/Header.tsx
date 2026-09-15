@@ -1,35 +1,32 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { label: "התוכנית", href: "#program" },
-  { label: "למי מתאים", href: "#audience" },
-  { label: "שותפים", href: "#partners" },
+  { label: "התוכנית", hash: "#program" },
+  { label: "למי מתאים", hash: "#audience" },
+  { label: "שותפים", hash: "#partners" },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md border-b border-border/50">
-      <div className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
-        <a href="#" className="shrink-0">
-          <img src="/logo.png" alt="Negev Talent Growth" className="h-6 w-auto" />
-        </a>
+    <header className="site-header">
+      <div className="site-header__inner">
+        <Link to="/" aria-label="Negev Talent">
+          <img src="/logo.png" alt="Negev Talent Growth" className="site-header__logo" />
+        </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="site-nav">
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-text-secondary hover:text-navy transition-colors">
-              {l.label}
-            </a>
+            <Link key={l.hash} to={{ pathname: "/", hash: l.hash }}>{l.label}</Link>
           ))}
-          <a href="#apply" className="text-sm font-semibold text-blue hover:text-navy transition-colors">
-            הרשמה ←
-          </a>
+          <Link to={{ pathname: "/", hash: "#apply" }} className="site-nav__cta">הרשמה ←</Link>
         </nav>
 
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2" aria-label="תפריט">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <button onClick={() => setOpen(!open)} className="site-header__burger" aria-label="תפריט">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             {open ? (
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             ) : (
@@ -45,17 +42,13 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-border/50 overflow-hidden"
+            className="mobile-nav"
           >
-            <nav className="flex flex-col gap-4 px-6 py-6">
+            <nav className="mobile-nav__inner">
               {navLinks.map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-base text-text-secondary">
-                  {l.label}
-                </a>
+                <Link key={l.hash} to={{ pathname: "/", hash: l.hash }} onClick={() => setOpen(false)}>{l.label}</Link>
               ))}
-              <a href="#apply" onClick={() => setOpen(false)} className="text-base font-semibold text-blue">
-                הרשמה
-              </a>
+              <Link to={{ pathname: "/", hash: "#apply" }} className="site-nav__cta" onClick={() => setOpen(false)}>הרשמה</Link>
             </nav>
           </motion.div>
         )}
