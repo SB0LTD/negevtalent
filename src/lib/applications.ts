@@ -92,9 +92,10 @@ const PAGE_SIZE = 25;
 // --- Test-mode override plumbing -------------------------------------------
 
 function isTestMode(): boolean {
-  return (
-    import.meta.env.DEV && import.meta.env.VITE_ADMIN_TEST_MODE === "1"
-  );
+  // `import.meta.env` is always defined under Vite; guard the non-Vite case
+  // (Playwright esbuild) so importing a pure helper from this module is safe.
+  const env = import.meta.env ?? {};
+  return env.DEV && env.VITE_ADMIN_TEST_MODE === "1";
 }
 
 // Shared in-memory fixtures (exported so tests/other modules reuse them).
