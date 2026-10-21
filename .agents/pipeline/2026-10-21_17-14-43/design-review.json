@@ -1,0 +1,37 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    {
+      "id": 1,
+      "severity": "NIT",
+      "title": "\"Last 7 days\" dashboard count has no specified query shape",
+      "location": "Design: File-Level Plan (DashboardPage.tsx) / Pagination section",
+      "problem": "DashboardPage is described as using getCountFromServer for a last-7-days count, but no query shape is given. createdAt is an ISO-8601 string, so a lexical range filter is needed, and the implementer must know not to combine it with an orderBy on another field (which would require a composite index).",
+      "fix": "Specify: getCountFromServer(query(collection(db,'applications'), where('createdAt','>=', new Date(Date.now()-7*864e5).toISOString()))); single-field range, no composite index."
+    },
+    {
+      "id": 2,
+      "severity": "NIT",
+      "title": "verbatimModuleSyntax import type requirement stated only for applications.ts",
+      "location": "Design: File-Level Plan (all new src modules)",
+      "problem": "tsconfig.app.json has verbatimModuleSyntax:true, so any value-position import of a type-only symbol fails tsc -b. The design notes this only for applications.ts, but it applies to AuthContext.tsx, useAuth.ts, adminApi.ts, RequireAuth.tsx etc. importing User, FunctionsError, Timestamp, QueryDocumentSnapshot, Role.",
+      "fix": "Add a general File-Level Plan note that all new modules use import type for type-only imports because verbatimModuleSyntax is on."
+    },
+    {
+      "id": 3,
+      "severity": "NIT",
+      "title": "No webServer in Playwright config; override specs depend on a manually-started dev server",
+      "location": "Design: Testing Strategy; playwright.config.ts (no webServer)",
+      "problem": "The DEV+flag override specs run against npm run dev (port 5173) while redirect/login specs run against vite preview (port 4173). Playwright does not auto-start or wait for either server, and the two-port/two-mode split is easy to misrun, producing a raw connection error.",
+      "fix": "In the README pin the dev port (npm run dev -- --port 5173) and set SITE_URL=http://localhost:5173 for DEV+flag specs vs http://localhost:4173 for preview specs, and state the server must be up before playwright test (no auto-start)."
+    },
+    {
+      "id": 4,
+      "severity": "NIT",
+      "title": "revokeAdmin clears claim with setCustomUserClaims(uid, { role: null })",
+      "location": "Design: Cloud Functions (revokeAdmin)",
+      "problem": "Clearing via { role: null } leaves a role:null key rather than removing the claim. Behavior is correct (rules role() returns null; null not in role list; UI treats role===null as access-denied), but the intent should be explicit so it is not 'fixed' into a different token shape.",
+      "fix": "Note that setCustomUserClaims(uid, { role: null }) is intentional: keeps the single-claim shape, denied by both rules and the role===null UI path; getIdTokenResult().claims.role reads null."
+    }
+  ]
+}

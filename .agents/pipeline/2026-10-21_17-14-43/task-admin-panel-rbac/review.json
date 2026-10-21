@@ -1,0 +1,10 @@
+[
+  {
+    "id": "INFO-1",
+    "severity": "info",
+    "confidence": "confirmed",
+    "area": "unrelated changes bundled in worktree",
+    "finding": "The working tree carries two public-site modifications unrelated to the admin RBAC feature: index.html (+21 lines, the Meta Pixel from an earlier request) and src/pages/HomePage.tsx (±2). These are untracked/unstaged and are NOT part of the five admin commits (6984ab1..f42b199), so they do not affect the admin panel's correctness or this verdict. Noted so the eventual commit of the admin work does not accidentally sweep them in.",
+    "blocking": false
+  }
+]

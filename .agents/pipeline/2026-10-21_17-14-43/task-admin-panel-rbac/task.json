@@ -1,0 +1,7 @@
+{
+  "task_id": "task-admin-panel-rbac",
+  "task_description": "Add an additive /admin/* admin panel to the Negev Talent React 19 + Vite SPA: Firebase Auth email/password login, three-role RBAC (superadmin/admin/viewer) via Auth custom claims mirrored in Firestore admins/{uid}, applications management (list/filter/search/sort/paginate, detail, status workflow with SDK-written audit history, CSV export, dashboard stats), and a superadmin-only admin-management screen. RBAC enforced in three layers (Firestore rules, Cloud Functions onCall, React UI). Append Cloud Functions callables (setApplicationStatus, listAdmins, grantRole, revokeAdmin) + bootstrap script; extend firestore.rules; add firestore.indexes.json; add Playwright specs with a DEV-only test-mode override. The public form, exports.apply, ApplyWizard.tsx, webhook.ts, and src/main.tsx must NOT change.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "blocked_reason": null
+}
