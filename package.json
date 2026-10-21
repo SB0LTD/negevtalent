@@ -15,6 +15,7 @@
     "screenshot:all": "playwright test tests/screenshot.ts"
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "firebase": "^11.6.0",
     "framer-motion": "^12.6.0",
     "react": "^19.1.0",

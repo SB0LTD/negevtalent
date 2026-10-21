@@ -43,6 +43,20 @@ export interface Application {
   age?: string;
   background?: string;
   motivation?: string;
+  // Set when an admin books a Cal.com interview for this candidate.
+  meeting?: ApplicationMeeting;
+}
+
+export interface ApplicationMeeting {
+  // ISO-8601 start time of the booked meeting, or null if the embed did not
+  // provide it (still records that a booking happened).
+  startTime: string | null;
+  // Cal.com booking UID (for the manage/reschedule link), or null.
+  bookingUid: string | null;
+  // ISO-8601 time the booking was recorded by the admin.
+  bookedAt: string;
+  // Email of the admin who booked it.
+  bookedByEmail: string;
 }
 
 // Hebrew status labels.

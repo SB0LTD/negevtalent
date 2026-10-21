@@ -6,7 +6,7 @@ import { httpsCallable } from "firebase/functions";
 import { FirebaseError } from "firebase/app";
 import { functions } from "@/lib/firebase";
 import type { Role } from "@/lib/roles";
-import type { ApplicationStatus } from "@/lib/applications";
+import type { ApplicationMeeting, ApplicationStatus } from "@/lib/applications";
 import { FIXTURE_APPLICATIONS } from "@/lib/applications";
 
 // --- Request/response contracts --------------------------------------------
@@ -49,6 +49,17 @@ export interface SetApplicationStatusResponse {
   status: ApplicationStatus;
 }
 
+export interface SetApplicationMeetingRequest {
+  appId: string;
+  startTime: string | null;
+  bookingUid: string | null;
+}
+export interface SetApplicationMeetingResponse {
+  ok: boolean;
+  status: ApplicationStatus;
+  meeting: ApplicationMeeting;
+}
+
 // --- Error mapping ----------------------------------------------------------
 
 type ErrorMap = Partial<Record<string, string>>;
@@ -63,6 +74,12 @@ const STATUS_ERRORS: ErrorMap = {
   "permission-denied": "אין לך הרשאה לשנות סטטוס",
   "not-found": "המועמד לא נמצא",
   "invalid-argument": "ערך לא תקין",
+};
+
+const MEETING_ERRORS: ErrorMap = {
+  "permission-denied": "אין לך הרשאה לקבוע פגישה",
+  "not-found": "המועמד לא נמצא",
+  "invalid-argument": "פרטי הפגישה לא תקינים",
 };
 
 const GENERIC_SAVE_ERROR = "השמירה נכשלה, נסו שוב";
@@ -171,5 +188,39 @@ export async function setApplicationStatus(
     return result.data;
   } catch (err) {
     throw mapError(err, STATUS_ERRORS);
+  }
+}
+
+// Records a booked Cal.com meeting onto the application. The Cloud Function
+// is the sole writer: it verifies the caller is an editor, stamps the
+// meeting, flips status to "interview", and appends an audit-history entry.
+export async function setApplicationMeeting(
+  appId: string,
+  startTime: string | null,
+  bookingUid: string | null,
+): Promise<SetApplicationMeetingResponse> {
+  if (isTestMode()) {
+    const meeting: ApplicationMeeting = {
+      startTime,
+      bookingUid,
+      bookedAt: new Date().toISOString(),
+      bookedByEmail: "asaf@sb0.tech",
+    };
+    const target = FIXTURE_APPLICATIONS.find((a) => a.id === appId);
+    if (target) {
+      target.status = "interview";
+      target.meeting = meeting;
+    }
+    return { ok: true, status: "interview", meeting };
+  }
+  try {
+    const callable = httpsCallable<
+      SetApplicationMeetingRequest,
+      SetApplicationMeetingResponse
+    >(functions, "setApplicationMeeting");
+    const result = await callable({ appId, startTime, bookingUid });
+    return result.data;
+  } catch (err) {
+    throw mapError(err, MEETING_ERRORS);
   }
 }

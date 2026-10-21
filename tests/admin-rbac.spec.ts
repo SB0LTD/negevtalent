@@ -120,3 +120,39 @@ test.describe("List / detail / status over in-memory fixtures", () => {
     await expect(page.getByRole("link", { name: "אבי מזרחי" })).toHaveCount(0);
   });
 });
+
+test.describe("Cal.com meeting scheduling (test-mode booker)", () => {
+  test("viewer cannot see the schedule-meeting button", async ({ page }) => {
+    await loadAs(page, "viewer", "/admin/applications");
+    await page.getByRole("link", { name: "דנה כהן" }).click();
+    await expect(page.getByRole("heading", { name: "דנה כהן" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "קביעת פגישה" }),
+    ).toHaveCount(0);
+  });
+
+  test("admin schedules a meeting; status flips to interview and meeting shows", async ({
+    page,
+  }) => {
+    // fixture-1 (דנה כהן) starts as "new" with no meeting.
+    await loadAs(page, "admin", "/admin/applications");
+    await page.getByRole("link", { name: "דנה כהן" }).click();
+    await expect(page.getByRole("heading", { name: "דנה כהן" })).toBeVisible();
+
+    // Open the animated booking modal.
+    await page.getByRole("button", { name: "קביעת פגישה" }).click();
+    await expect(page.getByRole("dialog", { name: "קביעת פגישה" })).toBeVisible();
+
+    // The test-mode stand-in replaces the live Cal embed.
+    const booker = page.getByTestId("cal-test-booker");
+    await expect(booker).toBeVisible();
+    await booker.getByRole("button", { name: "אשר קביעת פגישה" }).click();
+
+    // Modal closes; meeting is recorded and status became "ראיון" (interview).
+    await expect(
+      page.getByRole("dialog", { name: "קביעת פגישה" }),
+    ).toHaveCount(0);
+    await expect(page.getByText("נקבעה פגישה")).toBeVisible();
+    await expect(page.locator("select.adm-select")).toHaveValue("interview");
+  });
+});

@@ -15,9 +15,12 @@ import type {
   ApplicationStatus,
   HistoryEntry,
 } from "@/lib/applications";
-import { setApplicationStatus } from "@/lib/adminApi";
+import { setApplicationMeeting, setApplicationStatus } from "@/lib/adminApi";
 import { MISSING, formatDateTimeHe } from "@/lib/format";
 import { useAuth, useRole } from "@/admin/useAuth";
+import { ScheduleMeetingModal } from "@/admin/ScheduleMeetingModal";
+import { bookingManageUrl } from "@/lib/cal";
+import type { MeetingInfo } from "@/lib/cal";
 
 type LoadState = "loading" | "ready" | "not-found" | "denied" | "error";
 
@@ -36,6 +39,8 @@ export function ApplicationDetailPage() {
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [statusSaving, setStatusSaving] = useState(false);
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [meetingError, setMeetingError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -90,6 +95,28 @@ export function ApplicationDetailPage() {
       setStatusError(err instanceof Error ? err.message : "השמירה נכשלה, נסו שוב");
     } finally {
       setStatusSaving(false);
+    }
+  };
+
+  const handleBooked = async (meeting: MeetingInfo) => {
+    if (!app) return;
+    setMeetingError(null);
+    try {
+      const res = await setApplicationMeeting(
+        app.id,
+        meeting.startTime,
+        meeting.bookingUid,
+      );
+      // Reflect the persisted meeting + status locally.
+      setApp((cur) =>
+        cur ? { ...cur, status: res.status, meeting: res.meeting } : cur,
+      );
+      setScheduleOpen(false);
+    } catch (err) {
+      console.error(err);
+      setMeetingError(
+        err instanceof Error ? err.message : "שמירת הפגישה נכשלה, נסו שוב",
+      );
     }
   };
 
@@ -199,9 +226,52 @@ export function ApplicationDetailPage() {
               </span>
             )}
           </span>
+
+          <span className="adm-detail-label">פגישה</span>
+          <span className="adm-detail-value">
+            {app.meeting ? (
+              <span className="adm-meeting-info">
+                <span className="adm-badge adm-badge--meeting">נקבעה פגישה</span>{" "}
+                {app.meeting.startTime
+                  ? formatDateTimeHe(app.meeting.startTime)
+                  : ""}
+                {app.meeting.bookingUid && (
+                  <>
+                    {" · "}
+                    <a
+                      className="adm-row-link"
+                      href={bookingManageUrl(app.meeting.bookingUid)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      פרטי ההזמנה
+                    </a>
+                  </>
+                )}
+              </span>
+            ) : (
+              <span className="adm-notice">טרם נקבעה</span>
+            )}
+          </span>
         </div>
 
+        {canEditApplications && (
+          <div className="adm-detail-actions">
+            <button
+              type="button"
+              className="adm-btn adm-btn--primary"
+              onClick={() => {
+                setMeetingError(null);
+                setScheduleOpen(true);
+              }}
+            >
+              {app.meeting ? "קביעת פגישה מחדש" : "קביעת פגישה"}
+            </button>
+          </div>
+        )}
+
         {statusError && <p className="adm-error">{statusError}</p>}
+        {meetingError && <p className="adm-error">{meetingError}</p>}
 
         <div className="adm-history">
           <h2 className="adm-history-title">היסטוריית שינויים</h2>
@@ -211,10 +281,18 @@ export function ApplicationDetailPage() {
             history.map((entry) => (
               <div className="adm-history-item" key={entry.id}>
                 <span>
-                  {entry.actorEmail || MISSING}: {entry.field}{" "}
-                  {STATUS_LABEL_HE[entry.from as ApplicationStatus] ?? entry.from}{" "}
-                  ←{" "}
-                  {STATUS_LABEL_HE[entry.to as ApplicationStatus] ?? entry.to}
+                  {entry.actorEmail || MISSING}:{" "}
+                  {entry.field === "meeting" ? (
+                    "נקבעה פגישה"
+                  ) : (
+                    <>
+                      {STATUS_LABEL_HE[entry.from as ApplicationStatus] ??
+                        entry.from}{" "}
+                      ←{" "}
+                      {STATUS_LABEL_HE[entry.to as ApplicationStatus] ??
+                        entry.to}
+                    </>
+                  )}
                 </span>{" "}
                 <span className="adm-history-meta">
                   {entry.at ? formatDateTimeHe(entry.at) : "שומר…"}
@@ -224,6 +302,14 @@ export function ApplicationDetailPage() {
           )}
         </div>
       </div>
+
+      <ScheduleMeetingModal
+        open={scheduleOpen}
+        candidateName={app.name}
+        candidateEmail={app.email}
+        onClose={() => setScheduleOpen(false)}
+        onBooked={(meeting) => void handleBooked(meeting)}
+      />
     </div>
   );
 }

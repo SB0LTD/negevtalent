@@ -124,6 +124,81 @@ exports.setApplicationStatus = onCall({ region: REGION }, async (request) => {
   }
 });
 
+exports.setApplicationMeeting = onCall({ region: REGION }, async (request) => {
+  assertEditor(request);
+
+  const appId = request.data && request.data.appId;
+  const startTime = request.data && request.data.startTime;
+  const bookingUid = request.data && request.data.bookingUid;
+
+  if (typeof appId !== "string" || appId.length === 0 || appId.length > 1500) {
+    throw new HttpsError("invalid-argument", "מזהה פנייה לא תקין");
+  }
+  // startTime / bookingUid are optional (the embed may not provide them),
+  // but when present they must be reasonable strings.
+  if (
+    startTime !== null &&
+    (typeof startTime !== "string" || startTime.length > 100)
+  ) {
+    throw new HttpsError("invalid-argument", "זמן פגישה לא תקין");
+  }
+  if (
+    bookingUid !== null &&
+    (typeof bookingUid !== "string" || bookingUid.length > 200)
+  ) {
+    throw new HttpsError("invalid-argument", "מזהה הזמנה לא תקין");
+  }
+
+  const meeting = {
+    startTime: startTime || null,
+    bookingUid: bookingUid || null,
+    bookedAt: new Date().toISOString(),
+    bookedByEmail: request.auth.token.email || "",
+  };
+
+  try {
+    const appRef = db.collection("applications").doc(appId);
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(appRef);
+      if (!snap.exists) {
+        throw new HttpsError("not-found", "הפנייה לא נמצאה");
+      }
+      const from = snap.get("status") || null;
+      tx.update(appRef, { meeting, status: "interview" });
+      // Record the meeting booking in the audit history.
+      const meetingRef = appRef.collection("history").doc();
+      tx.set(meetingRef, {
+        actorUid: request.auth.uid,
+        actorEmail: request.auth.token.email || "",
+        field: "meeting",
+        from: from || "",
+        to: meeting.startTime || "booked",
+        at: FieldValue.serverTimestamp(),
+      });
+      // If status actually changed, also log the status transition so the
+      // history reads consistently with manual status changes.
+      if (from !== "interview") {
+        const statusRef = appRef.collection("history").doc();
+        tx.set(statusRef, {
+          actorUid: request.auth.uid,
+          actorEmail: request.auth.token.email || "",
+          field: "status",
+          from,
+          to: "interview",
+          at: FieldValue.serverTimestamp(),
+        });
+      }
+    });
+    return { ok: true, status: "interview", meeting };
+  } catch (err) {
+    if (err instanceof HttpsError) {
+      throw err;
+    }
+    console.error("setApplicationMeeting failed:", err);
+    throw new HttpsError("internal", "שגיאה פנימית");
+  }
+});
+
 exports.listAdmins = onCall({ region: REGION }, async (request) => {
   assertSuperadmin(request);
 
