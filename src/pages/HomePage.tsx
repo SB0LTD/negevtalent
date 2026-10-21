@@ -224,7 +224,7 @@ export function HomePage() {
           <motion.div {...fade} className="section-head" style={{ marginBottom: "3.5rem" }}>
             <span className="eyebrow eyebrow--green">פתוח להרשמה</span>
             <h2 className="section-title">הרשמה</h2>
-            <p className="section-lead">המחזור הקרוב מתחיל בקרוב. תשאירו פרטים ונחזור אליכם</p>
+            <p className="section-lead">ההכשרה תתחיל ב-22/11. תשאירו פרטים ונחזור אליכם</p>
           </motion.div>
           <ApplyWizard />
         </div>

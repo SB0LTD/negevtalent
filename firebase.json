@@ -4,6 +4,26 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/__call/setApplicationStatus",
+        "function": { "functionId": "setApplicationStatus", "region": "europe-west1" }
+      },
+      {
+        "source": "/__call/setApplicationMeeting",
+        "function": { "functionId": "setApplicationMeeting", "region": "europe-west1" }
+      },
+      {
+        "source": "/__call/listAdmins",
+        "function": { "functionId": "listAdmins", "region": "europe-west1" }
+      },
+      {
+        "source": "/__call/grantRole",
+        "function": { "functionId": "grantRole", "region": "europe-west1" }
+      },
+      {
+        "source": "/__call/revokeAdmin",
+        "function": { "functionId": "revokeAdmin", "region": "europe-west1" }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

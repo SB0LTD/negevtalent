@@ -6,12 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Negev Talent | הכשרה טכנולוגית והשתלבות בתעשייה בנגב</title>
     <meta name="description" content="הכשרה טכנולוגית והשתלבות בתעשייה בנגב - Talent Negev" />
+
+    <!-- Canonical host: send the default Firebase domains to the real URL so
+         only negev.sb0.tech is ever shown. No-op on the canonical host and on
+         localhost. Runs before anything else to avoid a flash of the app. -->
+    <script>
+      (function () {
+        var canonical = "negev.sb0.tech";
+        var defaults = ["negevtalent.web.app", "negevtalent.firebaseapp.com"];
+        if (defaults.indexOf(location.hostname) !== -1) {
+          location.replace(
+            "https://" + canonical + location.pathname + location.search + location.hash
+          );
+        }
+      })();
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '882843358421729');
+      fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAZNSe4Qpk18e88aPq_bXmH8dxRefOjHc&libraries=places&language=he&region=IL"></script>
   </head>
   <body>
+    <!-- Meta Pixel Code (noscript fallback) -->
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=882843358421729&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code (noscript fallback) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
