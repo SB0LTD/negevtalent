@@ -1,0 +1,18 @@
+{
+  "id": "FEAT-005",
+  "type": "docs",
+  "description": "Operator documentation for the admin panel: bootstrap, deploy, indexes, test commands, the DEV-only test flag warning, and where submissions are viewed. Depends on all prior features so the documented commands and paths are final. No build impact.",
+  "status": "completed",
+  "steps": [
+    "Create ADMIN_README.md at repo root documenting: (1) First-superadmin bootstrap — the two seed emails must first have Firebase Auth accounts created in the console/SDK (password set there, never in code), then from functions/ run `gcloud auth application-default login` (or set GOOGLE_APPLICATION_CREDENTIALS to a service-account key, never committed) and `node scripts/bootstrap-admins.js`; the script is idempotent. (2) Deploy — `firebase deploy --only firestore:rules,firestore:indexes,functions,hosting`, noting the composite index (status ASC, createdAt DESC) MUST be deployed before live status filtering works (otherwise the status-filtered query throws failed-precondition, handled in-UI as 'שגיאת טעינה, נסו לרענן'). (3) Testing — the exact commands: unit spec `npx playwright test tests/unit.spec.ts --project=desktop`; routing/login against `npm run build` + `npx vite preview --port 4173` with SITE_URL; RBAC/offline against `npm run dev` with VITE_ADMIN_TEST_MODE=1 and SITE_URL=http://localhost:5173; always pin --project=desktop. (4) The DEV-only VITE_ADMIN_TEST_MODE flag: what it does, that it is double-gated by import.meta.env.DEV so it is stripped from every production build, and that it must never be set for a deploy. (5) Where to see submissions — sign in at /admin/login and open /admin/applications (list) or /admin/applications/:id (detail); dashboard at /admin shows counts. (6) Roles — superadmin/admin/viewer capabilities summary."
+  ],
+  "acceptance_criteria": [
+    "ADMIN_README.md exists at repo root and covers bootstrap, deploy (including the index dependency), test commands, the DEV-only flag warning, submissions location, and the role model.",
+    "All commands and file paths in the doc match the implemented code and config."
+  ],
+  "verification": [
+    "Review ADMIN_README.md for accuracy against the final code; no build/test impact."
+  ],
+  "blocked_reason": null,
+  "findings": "Created ADMIN_README.md at repo root. Verified every command and path against the final implemented code: firestore.indexes.json declares the composite index (applications: status ASC, createdAt DESC); firebase.json firestore block registers 'indexes': 'firestore.indexes.json'; functions/scripts/bootstrap-admins.js seeds asaf@sb0.tech and mor.k@elevation.ac via getUserByEmail + setCustomUserClaims({role:'superadmin'}) + admins/{uid} upsert with revoked:false (idempotent, ADC/GOOGLE_APPLICATION_CREDENTIALS, run from functions/ as `node scripts/bootstrap-admins.js`); App.tsx routes confirmed (/admin/login, /admin, /admin/applications, /admin/applications/:id, /admin/admins); .env.example documents VITE_ADMIN_TEST_MODE as DEV-only double-gated by import.meta.env.DEV; test specs exist (tests/unit.spec.ts, tests/admin-routing.spec.ts, tests/admin-rbac.spec.ts, tests/admin-live.spec.ts). Role table matches src/lib/roles.ts: canExport true for all roles (viewer/admin/superadmin), canEditApplications true for admin/superadmin, canManageAdmins superadmin-only. Documented the failed-precondition index dependency surfacing in-UI as 'שגיאת טעינה, נסו לרענן' and the last-superadmin guard 'לא ניתן להסיר את מנהל העל האחרון'. Docs-only: no build/lint/test impact; none run (per FEAT verification). No protected files touched."
+}
