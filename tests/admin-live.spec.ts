@@ -68,9 +68,11 @@ test.describe("Admin live (seeded superadmin)", () => {
     await login(page);
     await page.getByRole("link", { name: "מועמדים" }).click();
 
-    // If there is at least one application, open the first row's detail and
-    // verify the editor controls (status select + schedule button) render.
+    // Wait for the list to actually populate before counting (the table
+    // renders its header immediately but rows arrive after the Firestore read,
+    // so a bare count() races and can wrongly read 0).
     const firstRow = page.locator("table.adm-table tbody tr a").first();
+    await firstRow.waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
     const count = await page.locator("table.adm-table tbody tr").count();
     test.skip(count === 0, "no applications in the live dataset to open");
 
